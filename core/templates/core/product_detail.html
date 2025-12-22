@@ -1,0 +1,165 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container product-detail-page">
+    <div class="product-gallery">
+        {% if product.images.first %}
+        <div class="main-image">
+            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+        </div>
+        <div class="thumbnail-grid">
+            {% for img in product.images.all %}
+            <div class="thumbnail">
+                <img src="{{ img.image.url }}" alt="{{ product.name }}">
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="placeholder-img large"></div>
+        {% endif %}
+    </div>
+
+    <div class="product-details">
+        <h1 class="product-title">{{ product.name }}</h1>
+        {% if product.brand %}
+        <p class="product-brand">Brand: {{ product.brand.name }}</p>
+        {% endif %}
+
+        <div class="pricing">
+            {% if user.is_authenticated and user.role == 'RESELLER' %}
+            <p class="price-large">₹{{ product.wholesale_price }} <span class="unit">/ {{ product.unit }}</span></p>
+            <p class="retail-price">MRP: ₹{{ product.retail_price }}</p>
+            <p class="bulk-info">Units per box: {{ product.units_per_box }}</p>
+            {% else %}
+            <p class="price-large">₹{{ product.retail_price }} <span class="unit">/ {{ product.unit }}</span></p>
+            {% endif %}
+        </div>
+
+        <div class="stock-status {% if product.stock_quantity > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+            {% if product.stock_quantity > 0 %}
+            In Stock
+            {% else %}
+            Out of Stock
+            {% endif %}
+        </div>
+
+        <div class="product-description-section"
+            style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+            <h3 style="margin-bottom: 1rem;">Product Details</h3>
+            <p class="description" style="line-height: 1.6; color: var(--text-color);">{{ product.description }}</p>
+        </div>
+
+        {% if product.warranty_info %}
+        <div class="feature-box">
+            <strong>Warranty:</strong> {{ product.warranty_info }}
+        </div>
+        {% endif %}
+
+        <form action="{% url 'cart-add' product.id %}" method="post" class="actions">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="1" min="1" class="qty-input">
+            <button type="submit" class="btn-primary btn-lg">Add to Cart</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .product-detail-page {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding-top: 4rem;
+    }
+
+    .main-image {
+        background: var(--white);
+        border-radius: 1rem;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .main-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .thumbnail-grid {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .thumbnail:hover {
+        border-color: var(--primary-color);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .price-large {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .qty-input {
+        width: 80px;
+        padding: 0.5rem;
+        font-size: 1.25rem;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .product-detail-page {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const thumbnails = document.querySelectorAll('.thumbnail img');
+        const mainImage = document.querySelector('.main-image img');
+
+        thumbnails.forEach(thumb => {
+            thumb.parentElement.addEventListener('click', function () {
+                // Update main image source
+                mainImage.src = this.querySelector('img').src;
+
+                // Optional: seamless transition effect
+                mainImage.style.opacity = '0.5';
+                setTimeout(() => {
+                    mainImage.style.opacity = '1';
+                }, 200);
+
+                // Update active state styling
+                document.querySelectorAll('.thumbnail').forEach(t => t.style.borderColor = 'transparent');
+                this.style.borderColor = 'var(--primary-color)';
+            });
+        });
+    });
+</script>
+{% endblock %}

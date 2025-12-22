@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{ order.id }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .company-info h1 {
+            margin: 0;
+            color: #4f46e5;
+        }
+
+        .invoice-details {
+            text-align: right;
+        }
+
+        .bill-to {
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+
+        .totals {
+            text-align: right;
+        }
+
+        .totals p {
+            margin: 0.5rem 0;
+        }
+
+        .grand-total {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .print-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-container"
+        style="border: 1px solid #ddd; padding: 2rem; border-radius: 0.5rem; background: #fff;">
+        <div class="header">
+            <div class="company-info">
+                <h1 style="color: #4f46e5; margin-bottom: 0.5rem;">Mauli Traders</h1>
+                <p style="margin: 0; color: #666;">Main Market Road, Mangaon</p>
+                <p style="margin: 0; color: #666;">Maharashtra 402104</p>
+                <p style="margin: 0; color: #666;">Phone: +91 98232 45370</p>
+                <p style="margin: 0.5rem 0 0 0; font-weight: bold;">GSTIN: 27BDPRXXXXXXXX</p>
+            </div>
+            <div class="invoice-details">
+                <h2 style="color: #333; margin-bottom: 0.5rem;">INVOICE</h2>
+                <p><strong>Invoice #:</strong> INV-{{ order.id }}</p>
+                <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                <p><strong>Status:</strong> {{ order.get_payment_status_display }}</p>
+            </div>
+        </div>
+
+        <div style="margin: 2rem 0; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
+            <h3 style="margin: 0; color: #4f46e5;">Welcome to Mauli Traders</h3>
+        </div>
+
+        <div class="bill-to">
+            <h3>Bill To:</h3>
+            {% if order.user %}
+            <p>{{ order.user.first_name }} {{ order.user.last_name }}<br>{{ order.user.email }}</p>
+            {% else %}
+            <p>{{ order.customer_name }}<br>{{ order.customer_mobile }}</p>
+            {% endif %}
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td>₹{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <p>Subtotal: ₹{{ order.total_amount }}</p>
+            <p>Tax (0%): ₹0.00</p>
+            <p class="grand-total">Total: ₹{{ order.total_amount }}</p>
+        </div>
+
+        <div style="margin-top: 4rem; text-align: center; border-top: 1px dashed #ddd; padding-top: 2rem;">
+            <p style="font-size: 1.1rem; font-weight: 500; color: #4f46e5;">Thank you for your business!</p>
+            <p style="color: #666;">Visit Again</p>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <button onclick="window.print()" class="print-btn">Print Invoice</button>
+        <a href="{% url 'home' %}" class="print-btn"
+            style="background: #6b7280; text-decoration: none; display: inline-block;">Back to Home</a>
+    </div>
+</body>
+
+</html>

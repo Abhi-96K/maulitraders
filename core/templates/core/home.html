@@ -1,0 +1,144 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source src="{% static 'images/herom.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1>Building Your Dreams with Quality Materials</h1>
+        <p>Your one-stop shop for plumbing, hardware, and farming essentials in Marathwada.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'product-list' %}" class="btn-primary">Shop Now</a>
+            {% if user.role != 'RESELLER' %}
+            <a href="{% url 'reseller-register' %}" class="btn-secondary">Become a Reseller</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{% url 'product-list' %}?category={{ category.slug }}" class="category-card">
+                <div class="category-image">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    {% else %}
+                    <div class="placeholder-img"></div>
+                    {% endif %}
+                </div>
+                <h3>{{ category.name }}</h3>
+            </a>
+            {% empty %}
+            <p>No categories found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <a href="{% url 'product-detail' product.slug %}" class="product-card">
+                <div class="product-image">
+                    {% if product.images.first %}
+                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="placeholder-img"></div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="price">₹{{ product.retail_price }}</p>
+                    <span class="btn-sm">View Details</span>
+                </div>
+            </a>
+            {% empty %}
+            <p>No featured products found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="brand-marquee">
+    <div class="container">
+        <h2 class="section-title">Our Trusted Brand Partners</h2>
+        <div class="marquee-wrapper">
+            <div class="marquee-content">
+                {% for brand in brands %}
+                <div class="brand-item">
+                    {% if brand.logo %}
+                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}">
+                    {% else %}
+                    <span>{{ brand.name }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <!-- Duplicate for seamless loop -->
+                {% for brand in brands %}
+                <div class="brand-item">
+                    {% if brand.logo %}
+                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}">
+                    {% else %}
+                    <span>{{ brand.name }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const marqueeWrapper = document.querySelector('.marquee-wrapper');
+        const brandItems = document.querySelectorAll('.brand-item');
+
+        if (!marqueeWrapper || brandItems.length === 0) return;
+
+        function updateSpotlight() {
+            const wrapperRect = marqueeWrapper.getBoundingClientRect();
+            const wrapperCenter = wrapperRect.left + wrapperRect.width / 2;
+
+            let closestItem = null;
+            let minDistance = Infinity;
+
+            brandItems.forEach(item => {
+                const itemRect = item.getBoundingClientRect();
+                const itemCenter = itemRect.left + itemRect.width / 2;
+                const distance = Math.abs(wrapperCenter - itemCenter);
+
+                // Check if item is visible within the wrapper
+                if (itemRect.right > wrapperRect.left && itemRect.left < wrapperRect.right) {
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestItem = item;
+                    }
+                }
+
+                // Remove highlight from all first
+                item.classList.remove('highlight');
+            });
+
+            // Add highlight to the closest item
+            if (closestItem) {
+                closestItem.classList.add('highlight');
+            }
+
+            requestAnimationFrame(updateSpotlight);
+        }
+
+        // Start the loop
+        updateSpotlight();
+    });
+</script>
+{% endblock %}

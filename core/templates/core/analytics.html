@@ -1,0 +1,321 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container" style="padding: 4rem 0;">
+    <h1 class="section-title">Business Intelligence Dashboard</h1>
+
+    <!-- KPI Cards -->
+    <div class="analytics-grid">
+        <div class="stat-card">
+            <h3>Today</h3>
+            <div class="stat-row">
+                <span class="label">Sales</span>
+                <span class="value">₹{{ daily_sales }}</span>
+            </div>
+            <div class="stat-row">
+                <span class="label">Profit</span>
+                <span class="value profit">₹{{ daily_profit }}</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <h3>This Month</h3>
+            <div class="stat-row">
+                <span class="label">Sales</span>
+                <span class="value">₹{{ monthly_sales }}</span>
+            </div>
+            <div class="stat-row">
+                <span class="label">Profit</span>
+                <span class="value profit">₹{{ monthly_profit }}</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <h3>This Year</h3>
+            <div class="stat-row">
+                <span class="label">Sales</span>
+                <span class="value">₹{{ yearly_sales }}</span>
+            </div>
+            <div class="stat-row">
+                <span class="label">Profit</span>
+                <span class="value profit">₹{{ yearly_profit }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+        <div class="chart-box glass">
+            <h3>Sales Trend (Last 30 Days)</h3>
+            <canvas id="salesTrendChart"></canvas>
+        </div>
+        <div class="chart-box glass">
+            <h3>Sales by Category</h3>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Rankings Section -->
+    <div class="rankings-grid">
+        <!-- Top Selling -->
+        <div class="ranking-card glass">
+            <h3>🏆 Top Selling Products</h3>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in top_selling %}
+                    <tr>
+                        <td>{{ item.product__name }}</td>
+                        <td>{{ item.total_qty }}</td>
+                        <td>₹{{ item.total_revenue }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Lowest Selling -->
+        <div class="ranking-card glass">
+            <h3>📉 Lowest Selling Products</h3>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in lowest_selling %}
+                    <tr>
+                        <td>{{ item.product__name }}</td>
+                        <td>{{ item.total_qty }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2">No data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Highest Margin -->
+        <div class="ranking-card glass">
+            <h3>💰 Highest Margin Products</h3>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Margin %</th>
+                        <th>Profit/Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in highest_margin %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td style="color: #10b981; font-weight: bold;">{{ product.margin|stringformat:".1f" }}%</td>
+                        <td>₹{{ product.profit_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Lowest Margin -->
+        <div class="ranking-card glass">
+            <h3>⚠️ Lowest Margin Products</h3>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Margin %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in lowest_margin %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td style="color: #ef4444; font-weight: bold;">{{ product.margin|stringformat:".1f" }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-card h3 {
+        margin-top: 0;
+        color: var(--primary-color);
+        border-bottom: 2px solid #f3f4f6;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .stat-row .label {
+        color: #225c26;
+    }
+
+    .stat-row .value {
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .stat-row .value.profit {
+        color: #005539;
+
+    }
+
+    .charts-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .chart-box {
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .rankings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+
+    .ranking-card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .ranking-card h3 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ranking-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .ranking-table th {
+        font-weight: 600;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 1024px) {
+        .charts-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // Sales Trend Chart
+    const trendCtx = document.getElementById('salesTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: {{ trend_dates| safe }},
+        datasets: [{
+            label: 'Daily Sales (₹)',
+            data: {{ trend_values| safe }},
+        borderColor: '#4f46e5',
+        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        fill: true,
+        tension: 0.4
+            }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+    });
+
+    // Category Chart
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ cat_labels| safe }},
+        datasets: [{
+            data: {{ cat_values| safe }},
+        backgroundColor: [
+            '#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
+        ]
+            }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow p-5">
+                <div class="mb-4">
+                    <i class="fas fa-clock text-warning" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="mb-3">Account Under Review</h2>
+                <p class="lead mb-4">Thank you for registering as a reseller with Mauli Traders.</p>
+                <p>Your account is currently pending approval from our administrators. You will be notified via email
+                    once your account has been verified and approved.</p>
+                <p class="text-muted">This process typically takes 24-48 hours.</p>
+
+                <div class="mt-4">
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary"
+                            style="background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 1rem; padding: 0.5rem 1rem;">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container product-list-page" id="productListPage">
+    <div class="products-grid-wrapper">
+        <div class="search-bar-container">
+            <button class="toggle-filters-btn" onclick="toggleFilters()">
+                <span id="toggleIcon">▶</span> Filters
+            </button>
+            <form method="get" action="{% url 'product-list' %}" class="search-form">
+                <input type="text" name="q" placeholder="Search products..." value="{{ request.GET.q|default:'' }}">
+                <button type="submit" class="btn-primary">Search</button>
+            </form>
+        </div>
+
+        <h2 class="section-title">Products</h2>
+        <div class="products-grid">
+            {% for product in products %}
+            <a href="{% url 'product-detail' product.slug %}" class="product-card">
+                <div class="product-image">
+                    {% if product.images.first %}
+                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="placeholder-img"></div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    {% if user.is_authenticated and user.role == 'RESELLER' %}
+                    <p class="price">Wholesale: ₹{{ product.wholesale_price }}</p>
+                    <p class="retail-price"><small>MRP: ₹{{ product.retail_price }}</small></p>
+                    {% else %}
+                    <p class="price">₹{{ product.retail_price }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <p>No products found matching your criteria.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Filters Sidebar -->
+<aside class="filters glass" id="filtersSidebar">
+    <div class="filters-header">
+        <h3>Filters</h3>
+        <button class="close-filters-btn" onclick="toggleFilters()">×</button>
+    </div>
+    <form method="get">
+        <div class="filter-group">
+            <h4>Categories</h4>
+            {% for category in categories %}
+            <label>
+                {% if selected_category == category.slug %}
+                <input type="radio" name="category" value="{{ category.slug }}" checked>
+                {% else %}
+                <input type="radio" name="category" value="{{ category.slug }}">
+                {% endif %}
+                {{ category.name }}
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="filter-group">
+            <h4>Brands</h4>
+            <input type="text" id="brandSearch" class="filter-search" placeholder="Search brands..."
+                onkeyup="filterBrands()">
+            <div class="brand-list" id="brandList">
+                {% for brand in brands %}
+                <label class="brand-option">
+                    {% if selected_brand == brand.slug %}
+                    <input type="radio" name="brand" value="{{ brand.slug }}" checked>
+                    {% else %}
+                    <input type="radio" name="brand" value="{{ brand.slug }}">
+                    {% endif %}
+                    <span>{{ brand.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            function filterBrands() {
+                var input, filter, list, labels, span, i, txtValue;
+                input = document.getElementById("brandSearch");
+                filter = input.value.toUpperCase();
+                list = document.getElementById("brandList");
+                labels = list.getElementsByClassName("brand-option");
+
+                for (i = 0; i < labels.length; i++) {
+                    span = labels[i].getElementsByTagName("span")[0];
+                    if (span) {
+                        txtValue = span.textContent || span.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            labels[i].style.display = "";
+                        } else {
+                            labels[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+
+            function toggleFilters() {
+                const sidebar = document.getElementById('filtersSidebar');
+                sidebar.classList.toggle('open');
+            }
+        </script>
+
+        <button type="submit" class="btn-primary">Apply Filters</button>
+        <a href="{% url 'product-list' %}" class="btn-sm">Clear</a>
+    </form>
+</aside>
+
+<style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .filters {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    .product-list-page {
+        padding-top: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Fixed Sidebar Styles */
+    .filters {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 300px;
+        z-index: 1000;
+        padding: 2rem;
+        /* Match global .glass style but ensure it's usable as a sidebar */
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.1);
+        transform: translateX(-100%);
+        /* Hidden by default */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        border-radius: 0;
+        /* Full height, no radius */
+    }
+
+    .filters.open {
+        transform: translateX(0);
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .filters-header h3 {
+        margin: 0;
+    }
+
+    .close-filters-btn {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        color: var(--text-color);
+        line-height: 1;
+    }
+
+    /* Search Bar & Toggle Button */
+    .search-bar-container {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .toggle-filters-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s;
+        height: 100%;
+        /* Match input height */
+    }
+
+    .toggle-filters-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .search-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .search-form input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .search-form input:focus {
+        outline: none;
+        border-color: var(--primary-color, #3b82f6);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .product-list-page {
+            grid-template-columns: 1fr;
+        }
+
+        .filters {
+            width: 85%;
+            /* Slightly less than full width for context */
+            max-width: 300px;
+        }
+    }
+
+    .filter-search {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .brand-list {
+        max-height: 300px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .brand-option {
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}

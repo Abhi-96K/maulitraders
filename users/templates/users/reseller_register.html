@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Become a Reseller - Mauli Traders{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">Become a Reseller</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <small class="text-danger">{{ form.username.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <small class="text-danger">{{ form.email.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                {{ form.mobile }}
+                {% if form.mobile.errors %}
+                <small class="text-danger">{{ form.mobile.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Name</label>
+                {{ form.shop_name }}
+                {% if form.shop_name.errors %}
+                <small class="text-danger">{{ form.shop_name.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">GST Number (Optional)</label>
+                {{ form.gst_number }}
+                {% if form.gst_number.errors %}
+                <small class="text-danger">{{ form.gst_number.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Business Address</label>
+                {{ form.business_address }}
+                {% if form.business_address.errors %}
+                <small class="text-danger">{{ form.business_address.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">GST Certificate (Optional)</label>
+                {{ form.gst_certificate }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">KYC Document (Optional)</label>
+                {{ form.kyc_document }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Image (Optional)</label>
+                {{ form.shop_image }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <small class="text-danger">{{ form.password2.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">Register as Reseller</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem;">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

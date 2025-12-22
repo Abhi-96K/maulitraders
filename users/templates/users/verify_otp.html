@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 400px; margin: 4rem auto; padding: 2rem;">
+    <div class="card glass">
+        <h2 class="text-center mb-4">Verify OTP</h2>
+        <p class="text-center text-muted mb-4">We've sent a verification code to your email.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-4">
+                <label for="otp" class="form-label">Enter OTP</label>
+                <input type="text" name="otp" id="otp" class="form-control" placeholder="Enter 6-digit code" required
+                    maxlength="6" style="text-align: center; letter-spacing: 0.5rem; font-size: 1.5rem;">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Verify Email</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">Didn't receive code? <a href="{% url 'resend-otp' %}">Resend</a></small>
+        </div>
+    </div>
+</div>
+{% endblock %}

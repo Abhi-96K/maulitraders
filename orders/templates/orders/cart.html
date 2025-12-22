@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <h1 class="section-title" style="margin-top: 0; text-align: left;">Shopping Cart</h1>
+
+    {% if cart|length > 0 %}
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+        <!-- Cart Items -->
+        <div class="table-container glass">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                {% if item.product.images.first %}
+                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}"
+                                    style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;">
+                                {% else %}
+                                <div style="width: 60px; height: 60px; background: #e5e7eb; border-radius: 0.5rem;">
+                                </div>
+                                {% endif %}
+                                <span style="font-weight: 500;">{{ item.product.name }}</span>
+                            </div>
+                        </td>
+                        <td>₹{{ item.price }}</td>
+                        <td>
+                            <form action="{% url 'cart-update' item.product.id %}" method="post"
+                                style="display: flex; align-items: center; gap: 0.5rem;">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                    style="width: 60px; padding: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                                <button type="submit" class="btn-sm"
+                                    style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Update</button>
+                            </form>
+                        </td>
+                        <td style="font-weight: 600; color: var(--primary-color);">₹{{ item.total_price }}</td>
+                        <td>
+                            <a href="{% url 'cart-remove' item.product.id %}"
+                                style="color: #ef4444; text-decoration: none; font-weight: 500;">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="glass" style="padding: 2rem; border-radius: 1rem; height: fit-content;">
+            <h2 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.5rem;">Order Summary</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-light);">
+                <span>Subtotal</span>
+                <span>₹{{ cart.get_total_price }}</span>
+            </div>
+            <div
+                style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1); font-weight: 700; font-size: 1.25rem;">
+                <span>Total</span>
+                <span>₹{{ cart.get_total_price }}</span>
+            </div>
+            <a href="{% url 'checkout' %}" class="btn-primary"
+                style="display: block; text-align: center; margin-bottom: 1rem;">Proceed to Checkout</a>
+            <a href="{% url 'product-list' %}" class="btn-secondary"
+                style="display: block; text-align: center;">Continue Shopping</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass" style="text-align: center; padding: 4rem; border-radius: 1rem;">
+        <h2 style="margin-bottom: 1rem;">Your cart is empty</h2>
+        <p style="color: var(--text-light); margin-bottom: 2rem;">Looks like you haven't added anything to your cart
+            yet.</p>
+        <a href="{% url 'product-list' %}" class="btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <h1 class="section-title">Checkout</h1>
+
+    <div class="checkout-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Order Summary -->
+        <div class="order-summary glass" style="padding: 2rem;">
+            <h3>Order Summary</h3>
+            <div class="cart-items">
+                {% for item in cart %}
+                <div class="cart-item"
+                    style="display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+                    </div>
+                    <span>₹{{ item.total_price }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="total"
+                style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #eee; display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold;">
+                <span>Total</span>
+                <span>₹{{ cart.get_total_price }}</span>
+            </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <div class="checkout-form glass" style="padding: 2rem;" x-data="checkoutData">
+            <h3>Shipping & Payment</h3>
+            <form method="post" action="{% url 'checkout' %}" id="checkout-form">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.customer_name.id_for_label }}" class="form-label">Full Name</label>
+                        {{ form.customer_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.customer_mobile.id_for_label }}" class="form-label">Mobile Number</label>
+                        {{ form.customer_mobile }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.customer_email.id_for_label }}" class="form-label">Email Address
+                        (Optional)</label>
+                    <input type="email" name="customer_email" class="form-control" id="id_customer_email">
+                </div>
+
+                <h4 class="mb-3">Shipping Address</h4>
+                <div class="mb-3">
+                    <label for="{{ form.shipping_address.id_for_label }}" class="form-label">Address</label>
+                    {{ form.shipping_address }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.shipping_city.id_for_label }}" class="form-label">City</label>
+                        {{ form.shipping_city }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.shipping_pincode.id_for_label }}" class="form-label">Pincode</label>
+                        {{ form.shipping_pincode }}
+                    </div>
+                </div>
+
+                <div class="mb-3 form-check mt-3">
+                    <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                    <label class="form-check-label" for="termsCheck">
+                        I agree to the <a href="#"
+                            onclick="window.open('{% url 'terms' %}', 'Terms', 'width=600,height=600,scrollbars=yes'); return false;">Terms
+                            and Conditions</a>
+                    </label>
+                </div>
+
+                <div class="payment-section" style="margin-top: 2rem;">
+                    <h4>Payment Method</h4>
+
+                    <div class="payment-options"
+                        style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                        <label class="payment-option"
+                            style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="payment_method" value="COD" x-model="paymentMethod"
+                                @change="showQR = false">
+                            <span>Cash on Delivery (COD)</span>
+                        </label>
+
+                        <label class="payment-option"
+                            style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="payment_method" value="UPI" x-model="paymentMethod"
+                                @change="showQR = true">
+                            <span>UPI (Google Pay, PhonePe, Paytm)</span>
+                        </label>
+
+                        <label class="payment-option"
+                            style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="payment_method" value="NETBANKING" x-model="paymentMethod"
+                                @change="showQR = false">
+                            <span>Net Banking</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- UPI QR Code Section -->
+                <div x-show="showQR" x-transition class="upi-qr-section"
+                    style="margin-top: 2rem; text-align: center; background: #f9fafb; padding: 1rem; border-radius: 0.5rem;">
+                    <h4>Scan to Pay</h4>
+                    <p class="text-sm text-gray-500">Amount: ₹{{ cart.get_total_price }}</p>
+                    <div
+                        style="background: white; padding: 1rem; display: inline-block; border-radius: 0.5rem; margin: 1rem 0;">
+                        <canvas id="qr-code"></canvas>
+                    </div>
+
+                    <!-- UPI Intent Link -->
+                    <div style="margin-top: 1rem;">
+                        <a :href="upiLink" class="btn btn-outline-primary"
+                            style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-phone" viewBox="0 0 16 16">
+                                <path
+                                    d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                            </svg>
+                            Click to Pay on Phone
+                        </a>
+                        <p class="text-xs text-gray-400 mt-2">Tap above if you are on mobile</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 2rem;"
+                    x-text="paymentMethod === 'UPI' ? 'Confirm Payment & Place Order' : 'Place Order'">
+                    Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('checkoutData', () => ({
+            paymentMethod: 'COD',
+            showQR: false,
+            upiLink: '',
+
+            init() {
+                this.$watch('showQR', (value) => {
+                    if (value) {
+                        this.generateUPI();
+                    }
+                });
+                // Also generate immediately if needed (though showQR starts false)
+            },
+
+            generateUPI() {
+                const amount = '{{ cart.get_total_price }}';
+                const vpa = 'abhi.raner@ybl';
+                const name = 'Mauli Traders';
+                // tr is Transaction Reference, ideally unique per order. Using timestamp for demo.
+                // In production, generate this on backend and pass it.
+                // const tr = Date.now().toString(); 
+
+                this.upiLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+
+                // QRious works on canvas directly
+                new QRious({
+                    element: document.getElementById('qr-code'),
+                    value: this.upiLink,
+                    size: 200
+                });
+            }
+        }));
+    });
+</script>
+
+<style>
+    .payment-option:has(input:checked) {
+        border-color: var(--primary-color);
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+
+    @media (max-width: 768px) {
+        .checkout-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

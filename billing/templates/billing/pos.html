@@ -1,0 +1,183 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <h1 class="section-title">Point of Sale (POS)</h1>
+
+    <div class="pos-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Product Selection -->
+        <div class="glass" style="padding: 1.5rem;">
+            <div style="margin-bottom: 1.5rem;">
+                <input type="text" id="product-search" class="form-control" placeholder="Search products..."
+                    onkeyup="filterProducts()">
+            </div>
+
+            <div class="products-table-container" style="max-height: 600px; overflow-y: auto;">
+                <table class="table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-list">
+                        {% for product in products %}
+                        <tr class="product-row" data-name="{{ product.name|lower }}">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.stock_quantity }}</td>
+                            <td>₹{{ product.retail_price }}</td>
+                            <td>
+                                <button type="button" class="btn-sm"
+                                    onclick='addToCart({{ product.id }}, "{{ product.name|escapejs }}", {{ product.retail_price }})'>
+                                    Add
+                                </button>
+
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cart & Checkout -->
+        <div class="glass" style="padding: 1.5rem; height: fit-content;">
+            <h3>Current Order</h3>
+
+            <form method="post" id="pos-form">
+                {% csrf_token %}
+                <input type="hidden" name="cart_data" id="cart-data">
+
+                <div class="form-group">
+                    <label class="form-label">Customer Name</label>
+                    <input type="text" name="customer_name" class="form-control" placeholder="Walk-in Customer"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mobile</label>
+                    <input type="text" name="customer_mobile" class="form-control" placeholder="Mobile Number">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <select name="payment_method" class="form-control">
+                        <option value="CASH">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="CARD">Card</option>
+                    </select>
+                </div>
+
+                <div class="pos-cart"
+                    style="margin: 1.5rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1rem 0; min-height: 200px;">
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-items">
+                            <!-- Cart items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pos-total"
+                    style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold; margin-bottom: 1.5rem;">
+                    <span>Total:</span>
+                    <span id="cart-total">₹0.00</span>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Create Order & Print Bill</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = {};
+
+    function filterProducts() {
+        const input = document.getElementById('product-search');
+        const filter = input.value.toLowerCase();
+        const rows = document.getElementsByClassName('product-row');
+
+        for (let i = 0; i < rows.length; i++) {
+            const name = rows[i].getAttribute('data-name');
+            if (name.includes(filter)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+
+    function addToCart(id, name, price) {
+        if (cart[id]) {
+            cart[id].quantity += 1;
+        } else {
+            cart[id] = {
+                id: id,
+                name: name,
+                price: price,
+                quantity: 1
+            };
+        }
+        updateCartDisplay();
+    }
+
+    function removeFromCart(id) {
+        delete cart[id];
+        updateCartDisplay();
+    }
+
+    function updateCart(id, quantity) {
+        if (quantity < 1) {
+            removeFromCart(id);
+            return;
+        }
+        if (cart[id]) {
+            cart[id].quantity = parseInt(quantity);
+            updateCartDisplay();
+        }
+    }
+
+    function updateCartDisplay() {
+        const tbody = document.getElementById('cart-items');
+        tbody.innerHTML = '';
+        let total = 0;
+
+        for (const id in cart) {
+            const item = cart[id];
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const row = `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>
+                        <input type="number" value="${item.quantity}" min="1" 
+                            onchange="updateCart(${id}, this.value)"
+                            style="width: 60px; padding: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </td>
+                    <td>₹${itemTotal}</td>
+                    <td><button type="button" onclick="removeFromCart(${id})" style="color: red; background: none; border: none; cursor: pointer;">×</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        }
+
+        document.getElementById('cart-total').innerText = '₹' + total.toFixed(2);
+
+        // Update hidden input
+        const cartArray = Object.values(cart);
+        document.getElementById('cart-data').value = JSON.stringify(cartArray);
+    }
+</script>
+{% endblock %}
