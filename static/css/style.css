@@ -906,19 +906,22 @@ select:focus {
 /* Global Loader */
 #global-loader {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
+    /* Ensures full coverage */
     width: 100%;
     height: 100%;
-    background: rgba(240, 240, 245, 0.85);
-    /* Slightly clearer background */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 9999;
+    background: rgba(240, 240, 245, 0.9);
+    /* Slightly more opaque */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 2147483647;
+    /* Max z-index */
     display: flex;
     justify-content: center;
     align-items: center;
     transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+    margin: 0;
+    padding: 0;
 }
 
 #global-loader.hidden {
