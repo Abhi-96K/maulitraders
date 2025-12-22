@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     
     # Third party
     'rest_framework',
@@ -140,8 +142,16 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # Enable WhiteNoise's GZip compression of static assets.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dobgvf2ra'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '353832294429437'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'vEMgbEliJs_ByY7obvIEsnK3dnU'),
+}
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
