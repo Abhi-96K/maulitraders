@@ -95,18 +95,14 @@ def checkout(request):
             order.total_amount = cart.get_total_price() # + tax
             order.save()
             
-            # Send WhatsApp Notification
+            # Send SMS Notification
             try:
-                from maulitraders.utils.whatsapp import send_whatsapp_message
-                # Determine mobile number (user profile or guest input)
+                from maulitraders.utils.notifications import send_sms
+                # Determine mobile number
                 mobile = order.customer_mobile or (order.user.mobile if order.user else None)
                 if mobile:
-                    # Basic formatting ensuring +91 if missing (assuming India context as per project)
-                    if not mobile.startswith('+'):
-                        mobile = f"+91{mobile.strip()}"
-                    
-                    msg = f"Hello {order.customer_name or 'Customer'}, your order #{order.id} has been placed successfully! Total: ₹{order.total_amount}. We will update you once it's shipped."
-                    send_whatsapp_message(mobile, msg)
+                    msg = f"Hello {order.customer_name or 'Customer'}, your order #{order.id} has been placed! Total: {order.total_amount}. We will update you shortly."
+                    send_sms(mobile, msg)
             except Exception as e:
                 # Don't fail the order if notification fails
                 print(f"Notification Error: {e}")
