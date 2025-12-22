@@ -648,6 +648,158 @@ select:focus {
     }
 }
 
+/* Specific Mobile Optimizations (Redmi Note 10T & similar) */
+@media (max-width: 480px) {
+
+    /* Global Typography Reductions */
+    body {
+        font-size: 0.9rem;
+    }
+
+    h1,
+    .hero h1 {
+        font-size: 2rem !important;
+        margin-bottom: 1rem;
+    }
+
+    h2,
+    .section-title {
+        font-size: 1.75rem !important;
+        margin: 2.5rem 0 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    /* Hero Section */
+    .hero {
+        padding: 5rem 0 3rem;
+        margin: 1rem auto 2rem;
+        border-radius: 1rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-buttons {
+        gap: 0.5rem;
+        flex-direction: column;
+        padding: 0 2rem;
+    }
+
+    /* Smaller Buttons */
+    .btn-primary,
+    .btn-secondary,
+    .btn-sm {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        width: 100%;
+        /* Full width buttons on mobile hero for easier tapping */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .hero-buttons .btn-primary,
+    .hero-buttons .btn-secondary {
+        width: 100%;
+    }
+
+    /* Products Grid: Compact & 2 Columns where possible */
+    .products-grid {
+        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        /* Force 2 columns */
+    }
+
+    .product-card {
+        border-radius: 0.75rem;
+    }
+
+    .product-image {
+        height: 140px;
+        /* Reduced height */
+    }
+
+    .product-info {
+        padding: 0.75rem;
+    }
+
+    .product-info h3 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .price {
+        font-size: 1.1rem;
+    }
+
+    .product-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .product-meta .btn-sm {
+        width: 100%;
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    /* Navbar */
+    .logo {
+        font-size: 1.25rem;
+    }
+
+    .logo img {
+        height: 35px;
+    }
+
+    .header .container {
+        padding: 0.5rem 1rem;
+    }
+
+    /* Marquee */
+    .brand-marquee {
+        padding: 0.5rem 0 1rem;
+        border-radius: 1rem;
+    }
+
+    .brand-item {
+        height: 60px;
+        padding: 0.25rem 1rem;
+    }
+
+    .brand-item img {
+        max-height: 40px;
+        max-width: 80px;
+    }
+
+    /* Forms */
+    .form-container {
+        padding: 1.5rem;
+        margin: 1rem auto;
+    }
+
+    .product-detail-page {
+        padding-top: 1rem;
+        gap: 2rem;
+    }
+
+    .product-title {
+        font-size: 1.75rem;
+    }
+}
+
 /* Brand Marquee */
 /* Brand Marquee */
 .brand-marquee {
