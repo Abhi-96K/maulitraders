@@ -799,6 +799,8 @@ select:focus {
     position: relative;
     z-index: 10;
     margin-top: -2rem;
+    padding-top: 0px;
+    padding-bottom: 0px;
     /* Overlap slightly for better integration if needed, or keep 0 */
 }
 
@@ -844,13 +846,13 @@ select:focus {
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     /* Bouncy 3D transition */
-    height: 80px;
+    height: 40px;
     min-width: auto;
     transform-style: preserve-3d;
 }
 
 .brand-item img {
-    max-height: 60px;
+    max-height: 40px;
     max-width: 120px;
     width: auto;
     height: auto;
@@ -986,4 +988,112 @@ select:focus {
     100% {
         transform: rotate(-360deg);
     }
+}
+
+/* Signup Popup */
+.signup-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.signup-popup.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.signup-popup.hidden {
+    display: none;
+}
+
+.signup-popup-content {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateY(50px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.signup-popup.visible .signup-popup-content {
+    transform: translateY(0) scale(1);
+}
+
+.close-popup-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-light);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+    outline: none;
+}
+
+.close-popup-btn:hover {
+    color: var(--text-color);
+}
+
+.popup-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.signup-popup-content h3 {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.signup-popup-content p {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.popup-cta {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    padding: 1rem;
+}
+
+.popup-subtext {
+    font-size: 0.9rem;
+    margin-bottom: 0 !important;
+}
+
+.popup-subtext a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.popup-subtext a:hover {
+    text-decoration: underline;
 }

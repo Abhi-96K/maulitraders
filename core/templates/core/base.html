@@ -191,6 +191,46 @@
             }
         });
     </script>
+    <!-- Sign-up Popup -->
+    {% if not user.is_authenticated %}
+    <div id="signup-popup" class="signup-popup hidden">
+        <div class="signup-popup-content">
+            <button id="close-popup" class="close-popup-btn">&times;</button>
+            <div class="popup-icon">🎁</div>
+            <h3>Join Mauli Traders!</h3>
+            <p>Sign up now to unlock exclusive discounts, track your orders, and get faster checkout.</p>
+            <a href="{% url 'register' %}" class="btn-primary popup-cta">Sign Up Now</a>
+            <p class="popup-subtext">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
+    {%endif%}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const popup = document.getElementById('signup-popup');
+            const closeBtn = document.getElementById('close-popup');
+
+            // Check if popup has fully shown in this session
+            if (!sessionStorage.getItem('signupPopupShown') && popup) {
+                // Show after 5 seconds
+                setTimeout(() => {
+                    popup.classList.remove('hidden');
+                    popup.classList.add('visible');
+                }, 5000);
+            }
+
+            if (closeBtn && popup) {
+                closeBtn.addEventListener('click', function () {
+                    popup.classList.remove('visible');
+                    // Wait for animation to finish before hiding
+                    setTimeout(() => {
+                        popup.classList.add('hidden');
+                    }, 400); // match transition duration
+                    sessionStorage.setItem('signupPopupShown', 'true');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
