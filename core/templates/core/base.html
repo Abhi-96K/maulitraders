@@ -20,6 +20,22 @@
     </div>
 
     <script>
+        // Use a counter to handle multiple overlays trying to lock/unlock scroll
+        let scrollLockCount = 0;
+
+        function lockScroll() {
+            scrollLockCount++;
+            document.body.classList.add('no-scroll');
+        }
+
+        function unlockScroll() {
+            scrollLockCount--;
+            if (scrollLockCount <= 0) {
+                scrollLockCount = 0;
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
         // Hide loader when page is fully loaded
         window.addEventListener('load', function () {
             const loader = document.getElementById('global-loader');
@@ -27,62 +43,80 @@
                 loader.classList.add('hidden');
                 setTimeout(() => {
                     loader.style.display = 'none';
-                }, 300); // Wait for transition
+                    unlockScroll(); // Unlock scroll when loader finishes
+                }, 300);
             }
         });
 
-        // Fix for Chrome/Safari bfcache (back button issue)
+        // Initialize loader as locking scroll immediately if it exists
+        if (document.getElementById('global-loader')) {
+            lockScroll();
+        }
+
+        // Fix for Chrome/Safari bfcache
         window.addEventListener('pageshow', function (event) {
             const loader = document.getElementById('global-loader');
             if (loader) {
-                // If the page is being restored from the cache, hide the loader immediately
                 if (event.persisted) {
                     loader.style.display = 'none';
                     loader.classList.add('hidden');
-                } else {
-                    // Even if not persisted, ensure it's hidden on show if it was stuck
-                    loader.classList.add('hidden');
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                    }, 100);
+                    unlockScroll(); // Ensure unlock if coming from cache
                 }
             }
         });
 
-        // Show loader on link click (except new tab or anchor)
+        // Show loader on link/form actions
         document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('a');
             const loader = document.getElementById('global-loader');
 
-            links.forEach(link => {
+            // Links
+            document.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', function (e) {
                     const href = this.getAttribute('href');
                     const target = this.getAttribute('target');
-
                     if (href && !href.startsWith('#') && !href.startsWith('javascript') && target !== '_blank') {
                         if (loader) {
                             loader.style.display = 'flex';
-                            // Small delay to allow display:flex to apply before removing hidden class
-                            requestAnimationFrame(() => {
-                                loader.classList.remove('hidden');
-                            });
+                            requestAnimationFrame(() => loader.classList.remove('hidden'));
+                            lockScroll();
                         }
                     }
                 });
             });
 
-            // Show loader on form submit
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
+            // Forms
+            document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('submit', function () {
                     if (loader) {
                         loader.style.display = 'flex';
-                        requestAnimationFrame(() => {
-                            loader.classList.remove('hidden');
-                        });
+                        requestAnimationFrame(() => loader.classList.remove('hidden'));
+                        lockScroll();
                     }
                 });
             });
+
+            // Signup Popup Logic
+            const popup = document.getElementById('signup-popup');
+            const closeBtn = document.getElementById('close-popup');
+
+            if (!sessionStorage.getItem('signupPopupShown') && popup) {
+                setTimeout(() => {
+                    popup.classList.remove('hidden');
+                    popup.classList.add('visible');
+                    lockScroll();
+                }, 5000);
+            }
+
+            if (closeBtn && popup) {
+                closeBtn.addEventListener('click', function () {
+                    popup.classList.remove('visible');
+                    setTimeout(() => {
+                        popup.classList.add('hidden');
+                        unlockScroll();
+                    }, 400);
+                    sessionStorage.setItem('signupPopupShown', 'true');
+                });
+            }
         });
     </script>
     <header class="header">
@@ -205,32 +239,7 @@
     </div>
     {%endif%}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const popup = document.getElementById('signup-popup');
-            const closeBtn = document.getElementById('close-popup');
 
-            // Check if popup has fully shown in this session
-            if (!sessionStorage.getItem('signupPopupShown') && popup) {
-                // Show after 5 seconds
-                setTimeout(() => {
-                    popup.classList.remove('hidden');
-                    popup.classList.add('visible');
-                }, 5000);
-            }
-
-            if (closeBtn && popup) {
-                closeBtn.addEventListener('click', function () {
-                    popup.classList.remove('visible');
-                    // Wait for animation to finish before hiding
-                    setTimeout(() => {
-                        popup.classList.add('hidden');
-                    }, 400); // match transition duration
-                    sessionStorage.setItem('signupPopupShown', 'true');
-                });
-            }
-        });
-    </script>
 </body>
 
 </html>

@@ -980,6 +980,13 @@ select:focus {
     }
 }
 
+.no-scroll {
+    overflow: hidden !important;
+    height: 100vh !important;
+    touch-action: none;
+    /* Disable touch scrolling */
+}
+
 @keyframes spin-reverse {
     0% {
         transform: rotate(0deg);
