@@ -61,8 +61,7 @@ body {
     font-family: 'Outfit', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f3f4f6;
-    background-image: linear-gradient(to bottom right, var(--bg-gradient-start), var(--bg-gradient-end));
+    background: linear-gradient(1deg, #baa685, #fffffff3);
     background-attachment: fixed;
     color: var(--text-color);
     line-height: 1.6;
