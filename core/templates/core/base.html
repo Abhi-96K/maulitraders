@@ -122,8 +122,11 @@
     <header class="header">
         <div class="container">
             <a href="{% url 'home' %}" class="logo">
-                <img src="{% static 'images/logo.png' %}" alt="Mauli Traders Logo">
-                Mauli Traders
+                <img src="{% static 'images/logo_v2.png' %}" alt="Mauli Traders Logo">
+                <div style="display: flex; flex-direction: column;">
+                    <span>Mauli Traders</span>
+                    <span style="font-size: 0.7rem; font-weight: 300; line-height: 1;">Building Trust Since 2008</span>
+                </div>
             </a>
             <nav class="nav">
                 <a href="{% url 'home' %}">Home</a>
