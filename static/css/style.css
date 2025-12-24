@@ -18,7 +18,9 @@
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-3d: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 -2px 6px rgba(255, 255, 255, 0.5) inset;
+    --shadow-3d: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.1) inset;
+    --shadow-bevel: 0 4px 0 #3730a3;
+    /* Distinct 3D bevel */
     --radius-md: 0.75rem;
     --radius-lg: 1.5rem;
     --gray-200: #e5e7eb;
@@ -67,6 +69,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    perspective: 1000px;
     /* Enable 3D space */
 }
 
@@ -166,7 +169,8 @@ body {
     text-decoration: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
-    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3), 0 2px 0 #3730a3;
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3), 0 6px 0 #312e81;
+    /* Thicker bevel */
     /* Bottom border for 3D */
     border: none;
     cursor: pointer;
@@ -176,14 +180,14 @@ body {
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(79, 70, 229, 0.4), 0 2px 0 #3730a3;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4), 0 6px 0 #312e81;
     color: var(--white);
 }
 
 .btn-primary:active {
-    top: 2px;
-    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3), 0 0 0 #3730a3;
+    top: 6px;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
 }
 
@@ -316,8 +320,8 @@ body {
 }
 
 .category-card:hover {
-    transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
-    box-shadow: var(--shadow-3d);
+    transform: translateY(-15px) rotateX(4deg) rotateY(4deg) scale(1.02);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
     z-index: 10;
 }
 
@@ -384,8 +388,8 @@ body {
 }
 
 .product-card:hover {
-    transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
-    box-shadow: var(--shadow-3d);
+    transform: translateY(-15px) rotateX(4deg) rotateY(4deg) scale(1.02);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
     z-index: 10;
 }
 
