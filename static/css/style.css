@@ -1,25 +1,29 @@
 /* 3D & Premium Effects */
 :root {
-    --primary-color: #818cf8;
-    /* Lighter Indigo for Dark Mode */
-    --primary-dark: #6366f1;
-    --secondary-color: #f472b6;
-    --text-color: #f1f5f9;
-    /* Slate 100 (Light Text) */
-    --text-light: #94a3b8;
-    /* Slate 400 */
-    --bg-gradient-start: #1e293b;
+    --primary-color: #4f46e5;
+    /* Indigo 600 */
+    --primary-dark: #4338ca;
+    /* Indigo 700 */
+    --secondary-color: #ec4899;
+    /* Pink 500 */
+    --text-color: #1f2937;
+    /* Gray 800 */
+    --text-light: #6b7280;
+    /* Gray 500 */
+    --bg-gradient-start: #f3f4f6;
+    --bg-gradient-end: #e5e7eb;
     --white: #ffffff;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    /* Subtle white shine */
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-3d: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.1) inset;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-3d: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 -2px 6px rgba(255, 255, 255, 0.5) inset;
     --radius-md: 0.75rem;
     --radius-lg: 1.5rem;
-    --text-dark: #1f2937;
-    /* For elements that still need dark text (e.g. inputs) */
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --text-dark: var(--text-color);
 }
 
 /* Animations */
@@ -55,18 +59,14 @@ body {
     font-family: 'Outfit', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #0f172a;
-    /* Slate 900 */
-    background-image: radial-gradient(at 50% 0%, #1e293b 0%, #0f172a 70%);
-    /* Subtle spotlight effect */
-
+    background-color: #f3f4f6;
+    background-image: linear-gradient(to bottom right, var(--bg-gradient-start), var(--bg-gradient-end));
     background-attachment: fixed;
     color: var(--text-color);
     line-height: 1.6;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    perspective: 1000px;
     /* Enable 3D space */
 }
 
@@ -79,22 +79,23 @@ body {
 /* Glassmorphism Utilities */
 /* Glassmorphism Utilities */
 /* Glassmorphism Utilities */
+/* Glassmorphism Utilities */
 .glass {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
     border-radius: var(--radius-lg);
 }
 
 /* Header */
 .header {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     /* Darker header */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0;
     position: sticky;
     top: 0;
@@ -299,17 +300,17 @@ body {
 }
 
 .category-card {
-    background: var(--glass-bg);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     text-decoration: none;
     color: inherit;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     /* Bouncy transition */
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transform-style: preserve-3d;
     position: relative;
 }
@@ -369,16 +370,16 @@ body {
 }
 
 .product-card {
-    background: var(--glass-bg);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     /* Bouncy transition */
     position: relative;
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transform-style: preserve-3d;
 }
 
