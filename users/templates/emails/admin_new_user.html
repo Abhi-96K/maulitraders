@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>New User Registration</h2>
+        <p>A new user has registered on Mauli Traders.</p>
+
+        <table class="data-table">
+            <tr>
+                <th>Name</th>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ user.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Date Joined</th>
+                <td>{{ user.date_joined }}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

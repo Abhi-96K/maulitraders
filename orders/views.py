@@ -106,6 +106,15 @@ def checkout(request):
             except Exception as e:
                 # Don't fail the order if notification fails
                 print(f"Notification Error: {e}")
+            
+            # Send Email Notification to Admin
+            try:
+                from users.utils import send_html_email
+                admin_subject = f'New Order #{order.id} Received'
+                admin_context = {'order': order}
+                send_html_email(admin_subject, 'orders/emails/admin_new_order.html', admin_context, ['1.maulitraders@gmail.com'])
+            except Exception as e:
+                print(f"DEBUG: Error sending admin email: {e}")
 
             cart.clear()
             return render(request, 'orders/created.html', {'order': order})

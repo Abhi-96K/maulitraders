@@ -86,15 +86,17 @@ def register_view(request):
             
             # Send OTP via Email
             subject = 'Verify your email - Mauli Traders'
-            message = f'Your OTP for verification is: {otp_code}. It expires in 10 minutes.'
-            from_email = settings.DEFAULT_FROM_EMAIL
-            recipient_list = [user.email]
-            
-            print(f"DEBUG: Attempting to send OTP to {user.email}")
-            print(f"DEBUG: OTP Code: {otp_code}")
+            context = {'otp_code': otp_code}
             
             try:
-                send_mail(subject, message, from_email, recipient_list)
+                # Send User OTP
+                send_html_email(subject, 'emails/otp_verification.html', context, [user.email])
+                
+                # Send Admin Notification
+                admin_subject = f'New User Registered: {user.email}'
+                admin_context = {'user': user}
+                send_html_email(admin_subject, 'emails/admin_new_user.html', admin_context, ['1.maulitraders@gmail.com'])
+                
                 print(f"DEBUG: Email sent successfully to {user.email}")
                 messages.success(request, f"OTP sent to {user.email}. Please verify.")
             except Exception as e:
@@ -258,15 +260,10 @@ def resend_otp_view(request):
         
         # Send OTP via Email
         subject = 'Resend: Verify your email - Mauli Traders'
-        message = f'Your new OTP for verification is: {otp_code}. It expires in 10 minutes.'
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = [user.email]
-        
-        print(f"DEBUG: Resending OTP to {user.email}")
-        print(f"DEBUG: OTP Code: {otp_code}")
+        context = {'otp_code': otp_code}
         
         try:
-            send_mail(subject, message, from_email, recipient_list)
+            send_html_email(subject, 'emails/otp_verification.html', context, [user.email])
             messages.success(request, f"New OTP sent to {user.email}.")
         except Exception as e:
             print(f"DEBUG: Error sending email: {e}")
@@ -298,15 +295,10 @@ def verify_email_entry_view(request):
             
             # Send OTP via Email
             subject = 'Verify your email - Mauli Traders'
-            message = f'Your OTP for verification is: {otp_code}. It expires in 10 minutes.'
-            from_email = settings.DEFAULT_FROM_EMAIL
-            recipient_list = [user.email]
-            
-            print(f"DEBUG: Recovery OTP to {user.email}")
-            print(f"DEBUG: OTP Code: {otp_code}")
+            context = {'otp_code': otp_code}
             
             try:
-                send_mail(subject, message, from_email, recipient_list)
+                send_html_email(subject, 'emails/otp_verification.html', context, [user.email])
                 messages.success(request, f"OTP sent to {user.email}.")
             except Exception as e:
                 print(f"DEBUG: Error sending email: {e}")
