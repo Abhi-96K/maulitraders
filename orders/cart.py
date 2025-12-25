@@ -39,6 +39,12 @@ class Cart(object):
             cart[str(product.id)]['product'] = product
             
         for item in cart.values():
+            if 'product' not in item:
+                # Skip items whose product has been deleted from DB
+                continue
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
+            yield item
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
             yield item

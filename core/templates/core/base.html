@@ -139,6 +139,15 @@
     </header>
 
     <main class="main-content">
+        {% if messages %}
+        <div class="container" style="margin-top: 1rem;">
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 
