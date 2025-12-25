@@ -99,28 +99,6 @@
                 });
             });
 
-            // Signup Popup Logic
-            const popup = document.getElementById('signup-popup');
-            const closeBtn = document.getElementById('close-popup');
-
-            if (!sessionStorage.getItem('signupPopupShown') && popup) {
-                setTimeout(() => {
-                    popup.classList.remove('hidden');
-                    popup.classList.add('visible');
-                    lockScroll();
-                }, 5); // Reduced from 5000 to 500
-            }
-
-            if (closeBtn && popup) {
-                closeBtn.addEventListener('click', function () {
-                    popup.classList.remove('visible');
-                    setTimeout(() => {
-                        popup.classList.add('hidden');
-                        unlockScroll();
-                    }, 400);
-                    sessionStorage.setItem('signupPopupShown', 'true');
-                });
-            }
         });
     </script>
     <header class="header">
@@ -186,7 +164,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Mauli Traders. All rights reserved. (v1.3)</p>
+            <p>&copy; 2024 Mauli Traders. All rights reserved. (v1.4)</p>
         </div>
     </footer>
 
@@ -234,19 +212,6 @@
             }
         });
     </script>
-    <!-- Sign-up Popup -->
-    {% if not user.is_authenticated %}
-    <div id="signup-popup" class="signup-popup hidden">
-        <div class="signup-popup-content">
-            <button id="close-popup" class="close-popup-btn">&times;</button>
-            <div class="popup-icon">🎁</div>
-            <h3>Join Mauli Traders!</h3>
-            <p>Sign up now to unlock exclusive discounts, track your orders, and get faster checkout.</p>
-            <a href="{% url 'register' %}" class="btn-primary popup-cta">Sign Up Now</a>
-            <p class="popup-subtext">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
-        </div>
-    </div>
-    {%endif%}
 
 
 </body>
