@@ -83,3 +83,13 @@ class StockAdjustmentLog(models.Model):
 
     def __str__(self):
         return f"{self.product.name}: {self.quantity_change} ({self.reason})"
+
+class ProductNotification(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='notifications')
+    email = models.EmailField()
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, null=True, blank=True)
+    is_notified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.email} on {self.product.name}"

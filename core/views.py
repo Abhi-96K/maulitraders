@@ -81,6 +81,9 @@ def suggestions(request):
 def terms(request):
     return render(request, 'core/terms.html')
 
+def about(request):
+    return render(request, 'core/about.html')
+
 @user_passes_test(lambda u: u.is_staff)
 @user_passes_test(lambda u: u.is_staff)
 def analytics_view(request):
@@ -212,3 +215,40 @@ def analytics_view(request):
         'lowest_margin': lowest_margin,
     }
     return render(request, 'core/analytics.html', context)
+
+from django.http import JsonResponse
+from products.models import ProductNotification
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_POST
+from django.shortcuts import redirect
+from django.contrib import messages
+
+@require_POST
+def notify_stock(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    email = request.POST.get('email')
+    
+    # If user is logged in, use their email if not provided (though logic usually demands form input)
+    if request.user.is_authenticated and not email:
+        email = request.user.email
+
+    try:
+        validate_email(email)
+        
+        # Check if already subscribed
+        if not ProductNotification.objects.filter(product=product, email=email, is_notified=False).exists():
+            ProductNotification.objects.create(
+                product=product,
+                email=email,
+                user=request.user if request.user.is_authenticated else None
+            )
+            messages.success(request, f"We'll notify you at {email} when this product is back in stock!")
+        else:
+            messages.info(request, "You are already on the notification list for this product.")
+            
+    except ValidationError:
+        messages.error(request, "Please provide a valid email address.")
+    
+    return redirect('product-detail', slug=product.slug)
+

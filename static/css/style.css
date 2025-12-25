@@ -1105,5 +1105,51 @@ select:focus {
 }
 
 .popup-subtext a:hover {
-    text-decoration: underline;
-}
+
+    /* Notify Stock Form */
+    .notify-section {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        border: 1px solid #e5e7eb;
+        margin-top: 2rem;
+    }
+
+    .notify-section p {
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .notify-form {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .notify-form input[type="email"] {
+        flex: 1;
+    }
+
+    .stock-status.out-of-stock {
+        color: #ef4444;
+        /* Red 500 */
+        background: #fee2e2;
+        /* Red 100 */
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .stock-status.in-stock {
+        color: #059669;
+        /* Emerald 600 */
+        background: #d1fae5;
+        /* Emerald 100 */
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }

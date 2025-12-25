@@ -1,0 +1,265 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}About Us - Mauli Traders{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1 class="fade-in-up">Building Trust Since 2008</h1>
+            <p class="fade-in-up delay-1">Your trusted partner for quality building materials and hardware in
+                Marathwada.</p>
+        </div>
+        <div class="hero-bg-overlay"></div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="about-section story-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-text fade-in-left">
+                    <h2>Our Story</h2>
+                    <p>
+                        <strong>Mauli Traders</strong> started as a small dream in 2008 with a simple mission: to
+                        provide high-quality building materials to our local community. Over the last decade and a half,
+                        we have grown into one of the most trusted names in the region.
+                    </p>
+                    <p>
+                        We believe that every home built with our materials stands as a testament to our commitment to
+                        quality, durability, and customer satisfaction. From foundations to finishing touches, we are
+                        there at every step of your construction journey.
+                    </p>
+                </div>
+                <div class="col-image fade-in-right">
+                    <div class="image-card 3d-card">
+                        <div class="card-content">
+                            <h3>15+ Years</h3>
+                            <p>of Excellence</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Cards -->
+    <section class="about-section values-section">
+        <div class="container">
+            <h2 class="section-title fade-in-up">Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card fade-in-up delay-1">
+                    <div class="icon">🏆</div>
+                    <h3>Quality First</h3>
+                    <p>We never compromise on the quality of our materials. Only the best for your dream home.</p>
+                </div>
+                <div class="value-card fade-in-up delay-2">
+                    <div class="icon">🤝</div>
+                    <h3>Customer Focus</h3>
+                    <p>Your satisfaction is our priority. We offer personalized advice and support for every project.
+                    </p>
+                </div>
+                <div class="value-card fade-in-up delay-3">
+                    <div class="icon">🚀</div>
+                    <h3>Innovation</h3>
+                    <p>We store the latest and most efficient building solutions to keep you ahead.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="about-cta fade-in-up">
+        <div class="container">
+            <h2>Ready to Build Your Dream?</h2>
+            <p>Visit our store or contact us today for the best quotes.</p>
+            <a href="{% url 'contact' %}" class="btn-primary">Contact Us</a>
+        </div>
+    </section>
+</div>
+
+<style>
+    /* About Page Specific Styles */
+    .about-page {
+        overflow-x: hidden;
+    }
+
+    .about-hero {
+        padding: 8rem 0 6rem;
+        background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.1), transparent 40%),
+            radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 40%);
+        text-align: center;
+        position: relative;
+    }
+
+    .about-hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        text-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-hero p {
+        font-size: 1.25rem;
+        color: var(--text-light);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .about-section {
+        padding: 5rem 0;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        gap: 4rem;
+        flex-wrap: wrap;
+    }
+
+    .col-text {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .col-image {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .image-card {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(79, 70, 229, 0.3);
+        transform: rotate(-5deg);
+        transition: transform 0.5s ease;
+    }
+
+    .image-card:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .card-content h3 {
+        font-size: 4rem;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .value-card {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .value-card .icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .about-cta {
+        text-align: center;
+        padding: 6rem 0;
+        background: linear-gradient(to right, rgba(79, 70, 229, 0.05), rgba(236, 72, 153, 0.05));
+        margin-top: 2rem;
+    }
+
+    /* Animations */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .fade-in-left {
+        opacity: 0;
+        transform: translateX(-30px);
+        animation: fadeInLeft 0.8s ease-out forwards;
+    }
+
+    .fade-in-right {
+        opacity: 0;
+        transform: translateX(30px);
+        animation: fadeInRight 0.8s ease-out forwards;
+    }
+
+    .delay-1 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+        animation-delay: 0.4s;
+    }
+
+    .delay-3 {
+        animation-delay: 0.6s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .row {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .col-image {
+            order: -1;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
