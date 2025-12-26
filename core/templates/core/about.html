@@ -166,7 +166,7 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="about-cta parallax" style="background-image: url('{% static 'images/about-hero.png' %}');">
+    <section class="about-cta parallax">
         <div class="cta-overlay"></div>
         <div class="container cta-content fade-in-up">
             <h2>Ready to Start Your Project?</h2>
@@ -177,6 +177,10 @@
 </div>
 
 <style>
+    .about-cta.parallax {
+        background-image: url("/static/images/about-hero.png");
+    }
+
     /* Variables */
     :root {
         --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
