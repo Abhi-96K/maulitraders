@@ -199,3 +199,13 @@ TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER')
 # User requested specific sender number (Must be verified/owned in Twilio)
 TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')
+
+# DIAGNOSTIC LOGGING (To debug Vercel 500 Error)
+import sys
+print("=== DIAGNOSTIC: ENVIRONMENT VARIABLES ===", file=sys.stderr)
+KEYS_TO_CHECK = ['DEBUG', 'SECRET_KEY', 'CLOUDINARY_CLOUD_NAME', 'DATABASE_URL']
+for key in KEYS_TO_CHECK:
+    value = os.environ.get(key)
+    status = "SET" if value else "MISSING"
+    print(f"{key}: {status}", file=sys.stderr)
+print("=========================================", file=sys.stderr)
