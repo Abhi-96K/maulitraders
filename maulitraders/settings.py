@@ -30,6 +30,8 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',') + ['.vercel.app']
 
+CSRF_TRUSTED_ORIGINS = ['https://' + host for host in ALLOWED_HOSTS] + ['https://maulitraders.vercel.app']
+
 # Production Security Settings
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
