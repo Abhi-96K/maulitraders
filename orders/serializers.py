@@ -32,34 +32,40 @@ class OrderSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         validated_data['created_by'] = request.user if request else None
         
-        order = Order.objects.create(**validated_data)
+        from django.db import transaction
         
-        total_amount = 0
-        tax_amount = 0
-        
-        for item_data in items_data:
-            product = item_data['product']
-            quantity = item_data['quantity']
-            unit_price = item_data['unit_price']
-            tax_rate = item_data['tax_rate']
+        with transaction.atomic():
+            order = Order.objects.create(**validated_data)
             
-            # Calculate line total
-            line_total = quantity * unit_price
+            total_amount = 0
+            tax_amount = 0
             
-            OrderItem.objects.create(order=order, total_price=line_total, **item_data)
-            
-            total_amount += line_total
-            # Simple tax calc (inclusive or exclusive? Assuming exclusive for now based on fields)
-            # Actually, usually tax is included or calculated. 
-            # Let's assume unit_price is base price.
-            tax_amount += line_total * (tax_rate / 100)
-            
-            # Update stock
-            product.stock_quantity -= quantity
-            product.save()
+            for item_data in items_data:
+                product = item_data['product']
+                quantity = item_data['quantity']
+                unit_price = item_data['unit_price']
+                tax_rate = item_data['tax_rate']
+                
+                if product.stock_quantity < quantity:
+                    raise serializers.ValidationError(f"Insufficient stock for {product.name}. Available: {product.stock_quantity}")
 
-        order.total_amount = total_amount + tax_amount
-        order.tax_amount = tax_amount
-        order.save()
+                # Calculate line total
+                line_total = quantity * unit_price
+                
+                OrderItem.objects.create(order=order, total_price=line_total, **item_data)
+                
+                total_amount += line_total
+                # Simple tax calc (inclusive or exclusive? Assuming exclusive for now based on fields)
+                # Actually, usually tax is included or calculated. 
+                # Let's assume unit_price is base price.
+                tax_amount += line_total * (tax_rate / 100)
+                
+                # Update stock
+                product.stock_quantity -= quantity
+                product.save()
+
+            order.total_amount = total_amount + tax_amount
+            order.tax_amount = tax_amount
+            order.save()
         
         return order

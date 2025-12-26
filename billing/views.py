@@ -122,42 +122,49 @@ def pos_view(request):
                 messages.error(request, "Cart is empty!")
                 return redirect('pos')
 
-            # Create Order
-            order = Order.objects.create(
-                user=None, # Walk-in
-                created_by=request.user,
-                customer_name=customer_name,
-                customer_mobile=customer_mobile,
-                order_type='POS',
-                status='COMPLETED', # POS orders are instant
-                payment_method=payment_method,
-                payment_status='COMPLETED'
-            )
+            from django.db import transaction
             
-            total_amount = 0
-            
-            for item in cart_data:
-                product = Product.objects.get(id=item['id'])
-                quantity = int(item['quantity'])
-                price = product.retail_price # Use retail price for now
-                
-                OrderItem.objects.create(
-                    order=order,
-                    product=product,
-                    quantity=quantity,
-                    unit_price=price,
-                    tax_rate=0, # Simplified for now
-                    total_price=price * quantity
+            with transaction.atomic():
+                # Create Order
+                order = Order.objects.create(
+                    user=None, # Walk-in
+                    created_by=request.user,
+                    customer_name=customer_name,
+                    customer_mobile=customer_mobile,
+                    order_type='POS',
+                    status='COMPLETED', # POS orders are instant
+                    payment_method=payment_method,
+                    payment_status='COMPLETED'
                 )
                 
-                # Update Stock
-                product.stock_quantity -= quantity
-                product.save()
+                total_amount = 0
                 
-                total_amount += price * quantity
-                
-            order.total_amount = total_amount
-            order.save()
+                for item in cart_data:
+                    product = Product.objects.get(id=item['id'])
+                    quantity = int(item['quantity'])
+                    
+                    if product.stock_quantity < quantity:
+                        raise Exception(f"Insufficient stock for {product.name}. Available: {product.stock_quantity}")
+
+                    price = product.retail_price # Use retail price for now
+                    
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=quantity,
+                        unit_price=price,
+                        tax_rate=0, # Simplified for now
+                        total_price=price * quantity
+                    )
+                    
+                    # Update Stock
+                    product.stock_quantity -= quantity
+                    product.save()
+                    
+                    total_amount += price * quantity
+                    
+                order.total_amount = total_amount
+                order.save()
             
             messages.success(request, f"Order #{order.id} created successfully!")
             return redirect('invoice', order_id=order.id)

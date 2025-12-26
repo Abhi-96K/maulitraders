@@ -67,33 +67,44 @@ def checkout(request):
             # For guests (and registered users), the form cleaned_data is already set on 'order' by form.save(commit=False)
             # We just need to ensure we don't overwrite if not intended, but form.save() handles it.
             
-            # Set payment details
-            order.payment_method = request.POST.get('payment_method', 'COD')
-            if order.payment_method == 'COD':
-                order.payment_status = 'PENDING'
-            else:
-                # For UPI/Netbanking, we'll assume pending until callback (simulated here)
-                order.payment_status = 'PENDING'
-                
-            order.save()
+            from django.db import transaction
+            from django.contrib import messages
             
-            for item in cart:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item['product'],
-                    unit_price=item['price'],
-                    quantity=item['quantity'],
-                    total_price=item['total_price'],
-                    tax_rate=item['product'].tax_rate
-                )
-                # Update stock
-                product = item['product']
-                product.stock_quantity -= item['quantity']
-                product.save()
-            
-            # Calculate totals
-            order.total_amount = cart.get_total_price() # + tax
-            order.save()
+            try:
+                with transaction.atomic():
+                    # Set payment details
+                    order.payment_method = request.POST.get('payment_method', 'COD')
+                    if order.payment_method == 'COD':
+                        order.payment_status = 'PENDING'
+                    else:
+                        # For UPI/Netbanking, we'll assume pending until callback (simulated here)
+                        order.payment_status = 'PENDING'
+                        
+                    order.save()
+                    
+                    for item in cart:
+                        product = item['product']
+                        if product.stock_quantity < item['quantity']:
+                            raise Exception(f"Insufficient stock for {product.name}. Available: {product.stock_quantity}")
+                            
+                        OrderItem.objects.create(
+                            order=order,
+                            product=product,
+                            unit_price=item['price'],
+                            quantity=item['quantity'],
+                            total_price=item['total_price'],
+                            tax_rate=item['product'].tax_rate
+                        )
+                        # Update stock
+                        product.stock_quantity -= item['quantity']
+                        product.save()
+                    
+                    # Calculate totals
+                    order.total_amount = cart.get_total_price() # + tax
+                    order.save()
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('cart-detail')
             
             # Send SMS Notification
             try:
