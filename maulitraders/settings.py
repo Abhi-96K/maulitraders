@@ -173,6 +173,11 @@ CLOUDINARY_STORAGE = {
 
 # Explicitly configure Cloudinary (fix for "Must supply cloud_name" error)
 import cloudinary
+
+# Construct CLOUDINARY_URL env var for the library to auto-discover (Most robust method)
+if os.environ.get('CLOUDINARY_API_KEY') and os.environ.get('CLOUDINARY_API_SECRET') and os.environ.get('CLOUDINARY_CLOUD_NAME'):
+    os.environ['CLOUDINARY_URL'] = f"cloudinary://{os.environ.get('CLOUDINARY_API_KEY')}:{os.environ.get('CLOUDINARY_API_SECRET')}@{os.environ.get('CLOUDINARY_CLOUD_NAME')}"
+
 cloudinary.config(
     cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
     api_key=os.environ.get('CLOUDINARY_API_KEY'),
