@@ -20,13 +20,45 @@
     </section>
 
     <!-- Video Story Section -->
-    <section class="video-hero">
-        <div class="video-wrapper">
-            <video autoplay muted loop playsinline class="cinematic-video">
-                <source src="{% static 'video/about_video.mp4' %}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="video-overlay"></div>
+    <!-- Video Story Section -->
+    <section class="about-section video-showcase">
+        <div class="container">
+            <div class="row">
+                <div class="col-image fade-in-left">
+                    <div class="video-frame">
+                        <video id="promoVideo" class="content-video" poster="{% static 'images/about-store.png' %}">
+                            <source src="{% static 'video/about_video.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls-overlay" id="videoOverlay">
+                            <button class="play-btn" onclick="toggleVideo()">
+                                <div class="play-icon">▶</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-text fade-in-right">
+                    <span class="eyebrow">A Closer Look</span>
+                    <h2>Experience Mauli Traders</h2>
+                    <p>
+                        Welcome to Mauli Traders. We take pride in being more than just a material supplier; we are a
+                        dedicated partner in your construction journey.
+                    </p>
+                    <p>
+                        From our expansive warehouse stocking the finest <strong>UltraTech Cement, JSW Steel, and Tata
+                            Tiscon</strong>, to our fleet of vehicles ready for rapid delivery, every aspect of our
+                        operation is designed for your convenience.
+                    </p>
+                    <p>
+                        In this video, explore our facility, meet our team, and see the scale at which we operate to
+                        serve thousands of happy customers across the region.
+                    </p>
+                    <div class="contact-mini">
+                        <p><strong>Visit Us Today:</strong><br>
+                            Main Market Road, Mangaon, Dist. Raigad 402104</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -167,6 +199,7 @@
         background: var(--primary-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         display: block;
         margin-bottom: 0.5rem;
     }
@@ -465,62 +498,219 @@
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
-        .about-hero h1 {
-            font-size: 2.5rem;
-        }
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 
-        .row {
-            flex-direction: column;
-            text-align: center;
-        }
+    .play-btn {
+        width: 60px;
+        height: 60px;
+    }
+    }
 
-        .reverse-mobile {
-            flex-direction: column-reverse;
-        }
+    /* Video Frame Styling */
+    .video-frame {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        aspect-ratio: 16/9;
+        background: #000;
+    }
 
-        .stats-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+    .content-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .video-controls-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+
+    .video-controls-overlay.playing {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .play-btn {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .play-btn:hover {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .play-icon {
+        color: white;
+        font-size: 2rem;
+        margin-left: 5px;
+    }
+
+    .contact-mini {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+        color: var(--text-dark);
+        font-size: 0.95rem;
     }
 </style>
 
 <script>
+    function toggleVideo() {
+        const video = document.getElementById('promoVideo');
+        const overlay = document.getElementById('videoOverlay');
+
+        if (video.paused) {
+            video.play();
+            overlay.classList.add('playing');
+            video.controls = true;
+        } else {
+            video.pause();
+            overlay.classList.remove('playing');
+            video.controls = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        border - radius: 24px;
+        overflow: hidden;
+        box - shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        aspect - ratio: 16 / 9;
+        background: #000;
+    }
+
+    .content - video {
+        width: 100 %;
+        height: 100 %;
+        object- fit: cover;
+    display: block;
+    }
+
+    .video - controls - overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align - items: center;
+        justify - content: center;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+
+    .video - controls - overlay.playing {
+        opacity: 0;
+        pointer - events: none;
+        /* Let clicks pass to video for pausing if needed, or implement pause on hover */
+    }
+
+    .play - btn {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop - filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border - radius: 50 %;
+        display: flex;
+        align - items: center;
+        justify - content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box - shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .play - btn:hover {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .play - icon {
+        color: white;
+        font - size: 2rem;
+        margin - left: 5px;
+        /* Visual center */
+    }
+
+    .contact - mini {
+        margin - top: 1.5rem;
+        padding - top: 1.5rem;
+        border - top: 1px solid #eee;
+        color: var(--text - dark);
+        font - weight: 500;
+    }
+</style >
+
+        <script>
+            function toggleVideo() {
+        const video = document.getElementById('promoVideo');
+            const overlay = document.getElementById('videoOverlay');
+
+            if (video.paused) {
+                video.play();
+            overlay.classList.add('playing');
+            video.controls = true; // Enable native controls once playing
+        } else {
+                video.pause();
+            overlay.classList.remove('playing');
+            video.controls = false;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Intersection Observer for Animations
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
 
-                    // Trigger counter if it's a stat item
-                    if (entry.target.querySelector('.counter')) {
-                        const counter = entry.target.querySelector('.counter');
-                        const target = parseInt(counter.dataset.target);
-                        animateCounter(counter, target);
-                        observer.unobserve(entry.target); // Count only once
+                        // Trigger counter if it's a stat item
+                        if (entry.target.querySelector('.counter')) {
+                            const counter = entry.target.querySelector('.counter');
+                            const target = parseInt(counter.dataset.target);
+                            animateCounter(counter, target);
+                            observer.unobserve(entry.target); // Count only once
+                        }
                     }
-                }
-            });
-        }, { threshold: 0.1 });
+                });
+        }, {threshold: 0.1 });
 
         document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
-            observer.observe(el);
+                observer.observe(el);
         });
 
-        // Counter Animation Function
-        function animateCounter(el, target) {
-            let start = 0;
+            // Counter Animation Function
+            function animateCounter(el, target) {
+                let start = 0;
             const duration = 2000; // 2 seconds
             const step = Math.ceil(target / (duration / 16));
 
             function update() {
                 start += step;
                 if (start >= target) {
-                    el.innerText = target;
+                el.innerText = target;
                 } else {
-                    el.innerText = start;
-                    requestAnimationFrame(update);
+                el.innerText = start;
+            requestAnimationFrame(update);
                 }
             }
             update();
