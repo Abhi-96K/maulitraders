@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
-from django.core.files.uploadedfile import UploadedFile
-from .utils import compress_image
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -21,10 +19,6 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-            
-        if self.image and hasattr(self.image, 'file') and isinstance(self.image.file, UploadedFile):
-            self.image = compress_image(self.image)
-            
         super().save(*args, **kwargs)
 
 class Brand(models.Model):
@@ -38,10 +32,6 @@ class Brand(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
-        if self.logo and hasattr(self.logo, 'file') and isinstance(self.logo.file, UploadedFile):
-            self.logo = compress_image(self.logo)
-            
         super().save(*args, **kwargs)
 
 class Product(models.Model):
@@ -90,11 +80,6 @@ class ProductImage(models.Model):
     
     def __str__(self):
         return f"Image for {self.product.name}"
-
-    def save(self, *args, **kwargs):
-        if self.image and hasattr(self.image, 'file') and isinstance(self.image.file, UploadedFile):
-            self.image = compress_image(self.image)
-        super().save(*args, **kwargs)
 
 class StockAdjustmentLog(models.Model):
     REASON_CHOICES = [
