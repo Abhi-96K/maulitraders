@@ -311,13 +311,18 @@
 
     <main class="main-content">
         {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <!-- Success Modal Trigger Data -->
+        <div id="success-trigger" data-message="{{ message }}" style="display:none;"></div>
+        {% else %}
         <div class="container" style="margin-top: 1rem;">
-            {% for message in messages %}
             <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
                 {{ message }}
             </div>
-            {% endfor %}
         </div>
+        {% endif %}
+        {% endfor %}
         {% endif %}
         {% block content %}{% endblock %}
     </main>
@@ -394,6 +399,208 @@
     </script>
 
 
+    <!-- Success Modal -->
+    <div id="success-modal" class="success-modal">
+        <div class="success-modal-content glass">
+            <div class="success-icon">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h2 style="color: #4f46e5; margin-bottom: 0.5rem; font-size: 2rem;">Success!</h2>
+            <p id="success-message-text" style="font-size: 1.1rem; color: var(--text-color); margin-bottom: 2rem;">
+                <!-- Message injected here -->
+            </p>
+            <button class="btn-primary" onclick="closeSuccessModal()" style="min-width: 150px;">Continue</button>
+
+            <!-- Confetti Elements (Pure CSS) -->
+            <div class="confetti c1"></div>
+            <div class="confetti c2"></div>
+            <div class="confetti c3"></div>
+            <div class="confetti c4"></div>
+            <div class="confetti c5"></div>
+            <div class="confetti c6"></div>
+        </div>
+    </div>
+
+    <style>
+        .success-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .success-modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 4rem;
+            border-radius: 2rem;
+            text-align: center;
+            transform: scale(0.8);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .success-modal.visible .success-modal-content {
+            transform: scale(1);
+        }
+
+        /* Checkmark Animation */
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 0 auto 1.5rem;
+            box-shadow: inset 0px 0px 0px #4f46e5;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #4f46e5;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #fff;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: none;
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 50px #4f46e5;
+            }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f2d74e;
+            opacity: 0;
+        }
+
+        .success-modal.visible .confetti {
+            animation: confetti 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .c1 {
+            top: 30%;
+            left: 20%;
+            background: #4f46e5;
+            transform: rotate(15deg);
+        }
+
+        .c2 {
+            top: 20%;
+            right: 20%;
+            background: #ec4899;
+            transform: rotate(-15deg);
+        }
+
+        .c3 {
+            bottom: 30%;
+            left: 10%;
+            background: #f2d74e;
+            transform: rotate(45deg);
+        }
+
+        .c4 {
+            bottom: 20%;
+            right: 10%;
+            background: #10b981;
+            transform: rotate(-45deg);
+        }
+
+        @keyframes confetti {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0);
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100px) rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        function closeSuccessModal() {
+            const modal = document.getElementById('success-modal');
+            if (modal) {
+                modal.classList.remove('visible');
+                setTimeout(() => { modal.style.display = 'none'; }, 400);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const trigger = document.getElementById('success-trigger');
+            if (trigger) {
+                const message = trigger.getAttribute('data-message');
+                const modal = document.getElementById('success-modal');
+                const text = document.getElementById('success-message-text');
+
+                if (modal && text && message) {
+                    text.textContent = message;
+                    setTimeout(() => {
+                        modal.classList.add('visible');
+                    }, 800); // Slight delay to allow loader to clear
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
