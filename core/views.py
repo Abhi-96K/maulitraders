@@ -69,13 +69,61 @@ def dashboard(request):
         'reseller_form': reseller_form
     })
 
+from django.core.mail import send_mail
+from django.conf import settings
+
 def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        
+        subject = f"New Contact Request from {name}"
+        email_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        
+        try:
+            send_mail(
+                subject,
+                email_message,
+                settings.DEFAULT_FROM_EMAIL,
+                ['1.maulitraders@gmail.com'],
+                fail_silently=False,
+            )
+            messages.success(request, "Your message has been sent successfully!")
+        except Exception as e:
+            messages.error(request, "An error occurred while sending your message. Please try again later.")
+            
     return render(request, 'core/contact.html')
 
 def support(request):
     return render(request, 'core/support.html')
 
 def suggestions(request):
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        suggestion = request.POST.get('suggestion')
+        email = request.POST.get('email')
+        
+        subject = f"New Suggestion: {topic}"
+        email_message = f"Topic: {topic}\n\nSuggestion:\n{suggestion}"
+        
+        if email:
+            email_message += f"\n\nFrom Email: {email}"
+        else:
+            email_message += "\n\n(No email provided)"
+            
+        try:
+            send_mail(
+                subject,
+                email_message,
+                settings.DEFAULT_FROM_EMAIL,
+                ['1.maulitraders@gmail.com'],
+                fail_silently=False,
+            )
+            messages.success(request, "Thank you for your suggestion!")
+        except Exception:
+            messages.error(request, "An error occurred while sending your suggestion.")
+
     return render(request, 'core/suggestions.html')
 
 def terms(request):

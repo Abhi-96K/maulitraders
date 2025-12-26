@@ -136,6 +136,14 @@
                 setTimeout(() => {
                     loader.style.display = 'none';
                     unlockScroll(); // Unlock scroll when loader finishes
+
+                    // Show Under Development Popup after loader clears
+                    const devPopup = document.getElementById('dev-popup');
+                    if (devPopup) {
+                        setTimeout(() => {
+                            devPopup.classList.add('visible');
+                        }, 500);
+                    }
                 }, 300);
             }
         });
@@ -188,7 +196,82 @@
             });
 
         });
+
+        function closeDevPopup() {
+            const devPopup = document.getElementById('dev-popup');
+            if (devPopup) {
+                devPopup.classList.remove('visible');
+                setTimeout(() => {
+                    devPopup.style.display = 'none';
+                }, 400);
+            }
+        }
     </script>
+
+    <!-- Under Development Popup -->
+    <div id="dev-popup" class="dev-popup">
+        <div class="dev-popup-content glass">
+            <button class="close-popup-btn" onclick="closeDevPopup()"
+                style="position:absolute; top:10px; right:15px; font-size:1.5rem; cursor:pointer; background:none; border:none; color:var(--text-color);">&times;</button>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🚧</div>
+            <h2 style="color: var(--primary-color); margin-bottom: 0.5rem;">Website Under Development</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color);">
+                Sorry for the inconvenience. We are currently working hard to get everything fully prepared for you.
+            </p>
+            <p style="margin-bottom: 1.5rem; font-size: 0.95rem; color: var(--text-light);">
+                In the meantime, feel free to browse. If you have any suggestions or run into issues, please let us
+                know!
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="{% url 'contact' %}" class="btn-primary" onclick="closeDevPopup()">Contact Us</a>
+                <a href="{% url 'suggestions' %}" class="btn-secondary" onclick="closeDevPopup()">Give Suggestion</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .dev-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(100px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dev-popup.visible {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dev-popup-content {
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        @media (max-width: 480px) {
+            .dev-popup {
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .dev-popup-content {
+                border-radius: 20px 20px 0 0 !important;
+            }
+        }
+    </style>
     <header class="header">
         <div class="container">
             <a href="{% url 'home' %}" class="logo">
