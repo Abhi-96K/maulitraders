@@ -66,6 +66,10 @@ class OrderItem(models.Model):
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
     
     def save(self, *args, **kwargs):
+        if not self.unit_price and self.product:
+            self.unit_price = self.product.retail_price
+        if not self.tax_rate and self.product:
+            self.tax_rate = self.product.tax_rate
         if not self.total_price:
             self.total_price = self.quantity * self.unit_price
         super().save(*args, **kwargs)
