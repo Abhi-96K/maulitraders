@@ -13,14 +13,31 @@ def home(request):
     import os
     import sys
     import cloudinary
-    print(f"DEBUG: Cloud Name (Env): {os.environ.get('CLOUDINARY_CLOUD_NAME')}", file=sys.stderr)
-    print(f"DEBUG: Config Object: {cloudinary.config().cloud_name}", file=sys.stderr)
-    
-    return render(request, 'core/home.html', {
-        'categories': categories,
-        'featured_products': featured_products,
-        'brands': brands
-    })
+    from django.http import HttpResponse
+
+    try:
+        return render(request, 'core/home.html', {
+            'categories': categories,
+            'featured_products': featured_products,
+            'brands': brands
+        })
+    except Exception as e:
+        # Diagnostic Error Page
+        debug_info = [
+            "=== DIAGNOSTIC ERROR PAGE ===",
+            f"Error: {str(e)}",
+            "",
+            "=== ENVIRONMENT VARIABLES ===",
+            f"CLOUDINARY_CLOUD_NAME: {'SET' if os.environ.get('CLOUDINARY_CLOUD_NAME') else 'MISSING'}",
+            f"CLOUDINARY_API_KEY: {'SET' if os.environ.get('CLOUDINARY_API_KEY') else 'MISSING'}",
+            f"CLOUDINARY_API_SECRET: {'SET' if os.environ.get('CLOUDINARY_API_SECRET') else 'MISSING'}",
+            "",
+            "=== CLOUDINARY CONFIG ===",
+            f"Config Cloud Name: {cloudinary.config().cloud_name}",
+            "",
+            "If stats are MISSING, please go to Vercel Dashboard -> Settings -> Environment Variables and add them."
+        ]
+        return HttpResponse("\n".join(debug_info), content_type="text/plain", status=500)
 
 def product_list(request):
     products = Product.objects.filter(is_active=True)
