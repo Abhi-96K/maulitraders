@@ -35,10 +35,10 @@ def cart_add(request, product_id):
     cart.add(product=product, quantity=quantity)
     return redirect('cart-detail')
 
+@require_POST
 def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
     cart.remove(product)
     return redirect('cart-detail')
 
