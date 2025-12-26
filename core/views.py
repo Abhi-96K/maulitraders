@@ -7,6 +7,15 @@ def home(request):
     categories = Category.objects.all()
     featured_products = Product.objects.filter(is_active=True, is_featured=True)[:20]
     brands = Brand.objects.all()
+    brands = Brand.objects.all()
+
+    # DEBUG: Check environment variables
+    import os
+    import sys
+    import cloudinary
+    print(f"DEBUG: Cloud Name (Env): {os.environ.get('CLOUDINARY_CLOUD_NAME')}", file=sys.stderr)
+    print(f"DEBUG: Config Object: {cloudinary.config().cloud_name}", file=sys.stderr)
+    
     return render(request, 'core/home.html', {
         'categories': categories,
         'featured_products': featured_products,
