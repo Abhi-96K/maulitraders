@@ -20,7 +20,6 @@
     </section>
 
     <!-- Video Story Section -->
-    <!-- Video Story Section -->
     <section class="about-section video-showcase">
         <div class="container">
             <div class="row">
@@ -498,14 +497,28 @@
     }
 
     /* Responsive */
-    .stats-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2.5rem;
+        }
 
-    .play-btn {
-        width: 60px;
-        height: 60px;
-    }
+        .row {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .reverse-mobile {
+            flex-direction: column-reverse;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+        }
     }
 
     /* Video Frame Styling */
@@ -584,7 +597,7 @@
         if (video.paused) {
             video.play();
             overlay.classList.add('playing');
-            video.controls = true;
+            video.controls = true; // Enable native controls once playing
         } else {
             video.pause();
             overlay.classList.remove('playing');
@@ -593,124 +606,40 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        border - radius: 24px;
-        overflow: hidden;
-        box - shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        aspect - ratio: 16 / 9;
-        background: #000;
-    }
-
-    .content - video {
-        width: 100 %;
-        height: 100 %;
-        object- fit: cover;
-    display: block;
-    }
-
-    .video - controls - overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.3);
-        display: flex;
-        align - items: center;
-        justify - content: center;
-        transition: opacity 0.3s ease;
-        cursor: pointer;
-    }
-
-    .video - controls - overlay.playing {
-        opacity: 0;
-        pointer - events: none;
-        /* Let clicks pass to video for pausing if needed, or implement pause on hover */
-    }
-
-    .play - btn {
-        width: 80px;
-        height: 80px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop - filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border - radius: 50 %;
-        display: flex;
-        align - items: center;
-        justify - content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box - shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .play - btn:hover {
-        transform: scale(1.1);
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .play - icon {
-        color: white;
-        font - size: 2rem;
-        margin - left: 5px;
-        /* Visual center */
-    }
-
-    .contact - mini {
-        margin - top: 1.5rem;
-        padding - top: 1.5rem;
-        border - top: 1px solid #eee;
-        color: var(--text - dark);
-        font - weight: 500;
-    }
-</style >
-
-        <script>
-            function toggleVideo() {
-        const video = document.getElementById('promoVideo');
-            const overlay = document.getElementById('videoOverlay');
-
-            if (video.paused) {
-                video.play();
-            overlay.classList.add('playing');
-            video.controls = true; // Enable native controls once playing
-        } else {
-                video.pause();
-            overlay.classList.remove('playing');
-            video.controls = false;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
         // Intersection Observer for Animations
         const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
 
-                        // Trigger counter if it's a stat item
-                        if (entry.target.querySelector('.counter')) {
-                            const counter = entry.target.querySelector('.counter');
-                            const target = parseInt(counter.dataset.target);
-                            animateCounter(counter, target);
-                            observer.unobserve(entry.target); // Count only once
-                        }
+                    // Trigger counter if it's a stat item
+                    if (entry.target.querySelector('.counter')) {
+                        const counter = entry.target.querySelector('.counter');
+                        const target = parseInt(counter.dataset.target);
+                        animateCounter(counter, target);
+                        observer.unobserve(entry.target); // Count only once
                     }
-                });
-        }, {threshold: 0.1 });
+                }
+            });
+        }, { threshold: 0.1 });
 
         document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
-                observer.observe(el);
+            observer.observe(el);
         });
 
-            // Counter Animation Function
-            function animateCounter(el, target) {
-                let start = 0;
+        // Counter Animation Function
+        function animateCounter(el, target) {
+            let start = 0;
             const duration = 2000; // 2 seconds
             const step = Math.ceil(target / (duration / 16));
 
             function update() {
                 start += step;
                 if (start >= target) {
-                el.innerText = target;
+                    el.innerText = target;
                 } else {
-                el.innerText = start;
-            requestAnimationFrame(update);
+                    el.innerText = start;
+                    requestAnimationFrame(update);
                 }
             }
             update();
