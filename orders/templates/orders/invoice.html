@@ -97,8 +97,8 @@
         <div class="header">
             <div class="company-info">
                 <h1 style="color: #4f46e5; margin-bottom: 0.5rem;">Mauli Traders</h1>
-                <p style="margin: 0; color: #666;">Main Market Road, Mangaon</p>
-                <p style="margin: 0; color: #666;">Maharashtra 402104</p>
+                <p style="margin: 0; color: #666;">Sonpeth-Pathri Road, Babhulgaon Phata</p>
+                <p style="margin: 0; color: #666;">Maharashtra 431506</p>
                 <p style="margin: 0; color: #666;">Phone: +91 98232 45370</p>
                 <p style="margin: 0.5rem 0 0 0; font-weight: bold;">GSTIN: 27BDPRXXXXXXXX</p>
             </div>
@@ -123,22 +123,22 @@
             {% endif %}
         </div>
 
-        <table>
+        <table style="border: 2px solid black;">
             <thead>
                 <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total</th>
+                    <th style="border: 2px solid black;">Item</th>
+                    <th style="border: 2px solid black;">Quantity</th>
+                    <th style="border: 2px solid black;">Unit Price</th>
+                    <th style="border: 2px solid black;">Total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in order.items.all %}
                 <tr>
-                    <td>{{ item.product.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>₹{{ item.unit_price }}</td>
-                    <td>₹{{ item.total_price }}</td>
+                    <td style="border: 1px solid black;">{{ item.product.name }}</td>
+                    <td style="border: 1px solid black;">{{ item.quantity }}</td>
+                    <td style="border: 1px solid black;">₹{{ item.unit_price }}</td>
+                    <td style="border: 1px solid black;">₹{{ item.total_price }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
