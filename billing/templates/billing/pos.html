@@ -88,10 +88,30 @@
                     </table>
                 </div>
 
+                <div style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: flex-end;">
+                    <input type="checkbox" id="gst-checkbox" name="gst_applied" onchange="updateCartDisplay()"
+                        style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="gst-checkbox" style="margin-left: 0.5rem; font-weight: 500; cursor: pointer;">Apply GST
+                        (18%)</label>
+                </div>
+
                 <div class="pos-total"
-                    style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold; margin-bottom: 1.5rem;">
-                    <span>Total:</span>
-                    <span id="cart-total">₹0.00</span>
+                    style="display: flex; flex-direction: column; align-items: flex-end; font-size: 1.1rem; margin-bottom: 1.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; width: 100%; max-width: 250px; margin-bottom: 0.5rem;">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal">₹0.00</span>
+                    </div>
+                    <div id="tax-row"
+                        style="display: none; justify-content: space-between; width: 100%; max-width: 250px; margin-bottom: 0.5rem; color: #666;">
+                        <span>Tax (18%):</span>
+                        <span id="cart-tax">₹0.00</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; width: 100%; max-width: 250px; font-size: 1.4rem; font-weight: bold; color: #1a365d; border-top: 1px solid #ddd; padding-top: 0.5rem;">
+                        <span>Total:</span>
+                        <span id="cart-total">₹0.00</span>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-primary" style="width: 100%;">Create Order & Print Bill</button>
@@ -150,13 +170,16 @@
 
     function updateCartDisplay() {
         const tbody = document.getElementById('cart-items');
+        const gstCheckbox = document.getElementById('gst-checkbox');
+        const taxRow = document.getElementById('tax-row');
+
         tbody.innerHTML = '';
-        let total = 0;
+        let subtotal = 0;
 
         for (const id in cart) {
             const item = cart[id];
             const itemTotal = item.price * item.quantity;
-            total += itemTotal;
+            subtotal += itemTotal;
 
             const row = `
                 <tr>
@@ -166,13 +189,26 @@
                             onchange="updateCart(${id}, this.value)"
                             style="width: 60px; padding: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
                     </td>
-                    <td>₹${itemTotal}</td>
+                    <td>₹${itemTotal.toFixed(2)}</td>
                     <td><button type="button" onclick="removeFromCart(${id})" style="color: red; background: none; border: none; cursor: pointer;">×</button></td>
                 </tr>
             `;
             tbody.innerHTML += row;
         }
 
+        let tax = 0;
+        let total = subtotal;
+
+        if (gstCheckbox.checked) {
+            tax = subtotal * 0.18;
+            total = subtotal + tax;
+            taxRow.style.display = 'flex';
+        } else {
+            taxRow.style.display = 'none';
+        }
+
+        document.getElementById('cart-subtotal').innerText = '₹' + subtotal.toFixed(2);
+        document.getElementById('cart-tax').innerText = '₹' + tax.toFixed(2);
         document.getElementById('cart-total').innerText = '₹' + total.toFixed(2);
 
         // Update hidden input

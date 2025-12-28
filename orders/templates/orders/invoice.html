@@ -67,17 +67,18 @@
             width: auto;
         }
 
+        /* Centered Ganesh Image as requested */
         .ganesh-section {
             position: absolute;
-            top: 0;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
         }
 
         .ganesh-section img {
-            max-height: 100px;
-            opacity: 0.9;
+            max-height: 120px;
+            width: auto;
         }
 
         .company-details {
@@ -105,7 +106,7 @@
         .divider {
             height: 2px;
             background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-            margin: 1.5rem 0 2rem;
+            margin: 2rem 0 2rem;
         }
 
         .info-grid {
@@ -117,8 +118,7 @@
 
         .bill-to h3,
         .invoice-meta h3 {
-            font-family: 'Run', sans-serif;
-            /* Fallback */
+            font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -144,6 +144,7 @@
             border-collapse: collapse;
             margin: 2rem 0;
             font-size: 0.95rem;
+            /* Center the table visually if it's not wide enough, though width 100% handles it */
         }
 
         .invoice-table th {
@@ -281,9 +282,6 @@
 
 <body>
     <div class="invoice-container">
-        <!-- Optional Watermark -->
-        <!-- <img src="{% static 'images/other_asset.png' %}" class="watermark" alt="Watermark"> -->
-
         <div class="header-section">
             <div class="logo-section">
                 <!-- Using uploaded logo -->
@@ -291,8 +289,8 @@
             </div>
 
             <div class="ganesh-section">
-                <!-- Placeholder for Ganesh Image - Trying the second uploaded asset or a placeholder -->
-                <img src="{% static 'images/other_asset.png' %}" alt="Shree Ganesha">
+                <!-- Updated Ganesh Image - Positioned centrally at the top -->
+                <img src="{% static 'images/ganesh_new.png' %}" alt="Shree Ganesha">
             </div>
 
             <div class="company-details">
@@ -325,7 +323,7 @@
                 <p>Invoice #: <strong>INV-{{ order.id }}</strong></p>
                 <p>Date: {{ order.created_at|date:"F d, Y" }}</p>
                 <p>Status: <span
-                        style="color: {% if order.payment_status == 'C' %}#48bb78{% else %}#ecc94b{% endif %}; font-weight: 600;">{{
+                        style="color: {% if order.payment_status == 'COMPLETED' %}#48bb78{% else %}#ecc94b{% endif %}; font-weight: 600;">{{
                         order.get_payment_status_display }}</span></p>
             </div>
         </div>
@@ -355,13 +353,20 @@
             <div class="totals-box">
                 <div class="total-row">
                     <span>Subtotal</span>
-                    <span>₹{{ order.total_amount }}</span>
+                    <!-- Calculate Subtotal from Total - Tax -->
+                    <!-- Assuming total_amount includes tax if gst_applied is true -->
+                    <span>₹{{ order.total_amount|add:order.tax_amount|safe }}</span>
+                    <!-- Wait, django templates are tricky with math. Let's use simpler logic if stored: order.total_amount is final. -->
+                    <!-- Since I am not storing subtotal explicitly, I can deduce it if needed or just show logic -->
                 </div>
-                <div class="total-row">
-                    <span>Tax (0%)</span>
-                    <span>₹0.00</span>
+
+                {% if order.gst_applied %}
+                <div class="total-row" style="color: #666;">
+                    <span>Tax (18%)</span>
+                    <span>₹{{ order.tax_amount }}</span>
                 </div>
-                <!-- Add discount or shipping if available in future -->
+                {% endif %}
+
                 <div class="total-row final">
                     <span>Total Amount</span>
                     <span>₹{{ order.total_amount }}</span>

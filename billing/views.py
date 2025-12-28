@@ -125,6 +125,9 @@ def pos_view(request):
             from django.db import transaction
             
             with transaction.atomic():
+                # Check for gst_applied in POST
+                gst_applied = request.POST.get('gst_applied') == 'on'
+                
                 # Create Order
                 order = Order.objects.create(
                     user=None, # Walk-in
@@ -134,10 +137,11 @@ def pos_view(request):
                     order_type='POS',
                     status='COMPLETED', # POS orders are instant
                     payment_method=payment_method,
-                    payment_status='COMPLETED'
+                    payment_status='COMPLETED',
+                    gst_applied=gst_applied
                 )
                 
-                total_amount = 0
+                subtotal_amount = 0
                 
                 for item in cart_data:
                     product = Product.objects.get(id=item['id'])
@@ -153,7 +157,7 @@ def pos_view(request):
                         product=product,
                         quantity=quantity,
                         unit_price=price,
-                        tax_rate=0, # Simplified for now
+                        tax_rate=18.00 if gst_applied else 0.00, 
                         total_price=price * quantity
                     )
                     
@@ -161,8 +165,17 @@ def pos_view(request):
                     product.stock_quantity -= quantity
                     product.save()
                     
-                    total_amount += price * quantity
+                    subtotal_amount += price * quantity
+                
+                # Financial Calculations
+                if gst_applied:
+                    tax_amount = subtotal_amount * 0.18
+                    total_amount = subtotal_amount + tax_amount
+                else:
+                    tax_amount = 0
+                    total_amount = subtotal_amount
                     
+                order.tax_amount = tax_amount
                 order.total_amount = total_amount
                 order.save()
             
