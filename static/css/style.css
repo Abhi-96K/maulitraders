@@ -816,6 +816,8 @@ select:focus {
     width: 100%;
     padding: 1rem 0;
     /* Space for 3D elements to pop */
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .marquee-content {
@@ -863,9 +865,9 @@ select:focus {
     object-fit: contain;
     mix-blend-mode: multiply;
     display: block;
-    filter: grayscale(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    filter: grayscale(0%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     /* Shadow on logo */
-    opacity: 0.8;
+    opacity: 1;
     transition: all 0.4s;
     transform: translateZ(0);
 }
@@ -892,7 +894,7 @@ select:focus {
 
 .brand-item:hover img,
 .brand-item.highlight img {
-    filter: grayscale(0%) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
     /* Enhanced shadow on hover */
     opacity: 1;
     transform: translateZ(20px);

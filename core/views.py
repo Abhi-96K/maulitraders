@@ -6,7 +6,7 @@ from orders.models import Order
 def home(request):
     categories = Category.objects.all()
     featured_products = Product.objects.filter(is_active=True, is_featured=True).prefetch_related('images')[:20]
-    brands = Brand.objects.all()
+    brands = Brand.objects.filter(show_on_home=True)
     return render(request, 'core/home.html', {
         'categories': categories,
         'featured_products': featured_products,

@@ -25,6 +25,7 @@ class Brand(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True)
     logo = models.ImageField(upload_to='brands/', blank=True, null=True)
+    show_on_home = models.BooleanField(default=False, help_text="Show in the brand marquee on the home page")
 
     def __str__(self):
         return self.name
