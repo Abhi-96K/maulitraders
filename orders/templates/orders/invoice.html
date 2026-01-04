@@ -9,6 +9,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #1a365d;
@@ -18,263 +19,370 @@
             --text-color: #2d3748;
             --light-bg: #f7fafc;
             --border-color: #e2e8f0;
+            --success-color: #48bb78;
+            --warning-color: #ecc94b;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-color);
-            line-height: 1.6;
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #fff;
+            line-height: 1.5;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 20px;
         }
 
         .invoice-container {
-            border: 1px solid var(--border-color);
-            border-top: 5px solid var(--primary-color);
-            padding: 3rem;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             background: #fff;
-            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            position: relative;
         }
 
-        /* Watermark effect for Ganesh Ji if needed, or just placement */
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.05;
-            z-index: 0;
-            width: 60%;
-            pointer-events: none;
+        /* Decorative top accent */
+        .invoice-container::before {
+            content: '';
+            display: block;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
 
-        .header-section {
+        .invoice-padding {
+            padding: 3rem;
+        }
+
+        /* HEADER */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             position: relative;
-            z-index: 1;
         }
 
-        .logo-section img {
+        .logo-box img {
             max-height: 80px;
             width: auto;
+            display: block;
         }
 
-        /* Centered Ganesh Image as requested */
-        .ganesh-section {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-        }
-
-        .ganesh-section img {
-            max-height: 120px;
-            width: auto;
-        }
-
-        .company-details {
+        .company-info {
             text-align: right;
-            font-size: 0.9rem;
         }
 
         .company-name {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            color: var(--primary-color);
-            margin: 0;
             font-weight: 700;
+            color: var(--primary-color);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .company-address {
+            font-size: 0.9rem;
+            color: #718096;
+            margin: 0;
         }
 
         .invoice-title {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .invoice-title h1 {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
-            color: var(--accent-color);
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            text-align: right;
+            color: var(--text-color);
+            letter-spacing: 0.1em;
+            margin: 0;
+            text-transform: uppercase;
         }
 
-        .divider {
-            height: 2px;
-            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-            margin: 2rem 0 2rem;
+        .invoice-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 0;
         }
 
-        .info-grid {
+        /* DETAILS GRID */
+        .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
 
-        .bill-to h3,
-        .invoice-meta h3 {
-            font-family: 'Inter', sans-serif;
+        .section-title {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--accent-color);
-            display: inline-block;
+            color: #718096;
+            font-weight: 600;
             margin-bottom: 0.5rem;
-            padding-bottom: 2px;
         }
 
-        .bill-to p,
-        .invoice-meta p {
+        .detail-group p {
             margin: 0.25rem 0;
-            font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        .invoice-meta {
-            text-align: right;
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .invoice-table {
+        /* TABLE */
+        .table-container {
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin: 2rem 0;
-            font-size: 0.95rem;
-            /* Center the table visually if it's not wide enough, though width 100% handles it */
         }
 
-        .invoice-table th {
+        th {
             background-color: var(--primary-color);
-            color: #fff;
+            color: white;
             padding: 1rem;
             text-align: left;
             font-weight: 500;
-            letter-spacing: 0.05em;
+            font-size: 0.9rem;
         }
 
-        .invoice-table th:first-child {
-            border-top-left-radius: 4px;
+        th:first-child {
+            border-top-left-radius: 6px;
         }
 
-        .invoice-table th:last-child {
-            border-top-right-radius: 4px;
+        th:last-child {
+            border-top-right-radius: 6px;
             text-align: right;
         }
 
-        .invoice-table td {
+        td {
             padding: 1rem;
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
         }
 
-        .invoice-table td:last-child {
+        td:last-child {
             text-align: right;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        .invoice-table tr:nth-child(even) {
-            background-color: var(--light-bg);
+        tr:last-child td {
+            border-bottom: none;
         }
 
+        /* TOTALS */
         .totals-section {
             display: flex;
             justify-content: flex-end;
-            margin-top: 2rem;
+            margin-bottom: 3rem;
         }
 
         .totals-box {
-            width: 300px;
-            background: var(--light-bg);
-            padding: 1.5rem;
-            border-radius: 4px;
-            border-left: 4px solid var(--accent-color);
+            width: 100%;
+            max-width: 350px;
         }
 
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
         }
 
         .total-row.final {
-            border-top: 1px solid #cbd5e0;
+            border-top: 2px solid var(--primary-color);
+            margin-top: 0.5rem;
             padding-top: 1rem;
-            margin-top: 1rem;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary-color);
         }
 
-        .footer {
-            margin-top: 4rem;
+        /* FOOTER & QR */
+        .footer-section {
             text-align: center;
-            font-size: 0.9rem;
-            color: #718096;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 2.5rem;
         }
 
-        .footer p {
-            margin: 0.25rem 0;
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .qr-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 5px;
+            background: #fff;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        /* Print Icons only or styled appropriately */
+        .social-link i {
+            font-size: 1.2rem;
         }
 
         .thank-you {
             font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--accent-color);
-            margin-bottom: 1rem;
+            font-style: italic;
+            margin-bottom: 0.5rem;
         }
 
-        .print-actions {
-            margin-top: 2rem;
+        .terms {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        /* ACTIONS */
+        .page-actions {
             text-align: center;
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
         }
 
         .btn {
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            border: none;
-            display: inline-block;
-            margin: 0 0.5rem;
-        }
-
-        .btn-primary {
             background: var(--primary-color);
             color: white;
-            box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
         }
 
-        .btn-secondary {
-            background: #fff;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
         }
 
+        /* MOBILE RESPONSIVE */
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .invoice-padding {
+                padding: 1.5rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .company-info {
+                text-align: center;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .table-container {
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+            }
+
+            th,
+            td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .invoice-title h1 {
+                font-size: 2rem;
+            }
+
+            .totals-box {
+                max-width: 100%;
+            }
+        }
+
+        /* PRINT STYLES */
         @media print {
             body {
+                background: none;
                 padding: 0;
-                background: #fff;
             }
 
             .invoice-container {
                 box-shadow: none;
                 border: none;
-                padding: 0;
+                max-width: 100%;
+                width: 100%;
             }
 
-            .print-actions {
+            .page-actions {
                 display: none;
+            }
+
+            .invoice-padding {
+                padding: 0;
             }
         }
     </style>
@@ -282,107 +390,143 @@
 
 <body>
     <div class="invoice-container">
-        <div class="header-section">
-            <div class="logo-section">
-                <!-- Using uploaded logo -->
-                <img src="{% static 'images/company_logo.png' %}" alt="Mauli Traders Logo">
-            </div>
+        <div class="invoice-padding">
 
-            <div class="ganesh-section">
-                <!-- Updated Ganesh Image - Positioned centrally at the top -->
-                <img src="{% static 'images/ganesh_final.jpg' %}" alt="Shree Ganesha">
-            </div>
-
-            <div class="company-details">
-                <div class="company-name">Mauli Traders</div>
-                <p>Sonpeth-Pathri Road, Babhulgaon Phata</p>
-                <p>Maharashtra 431506</p>
-                <p>Phone: +91 98232 45370</p>
-                <p><strong>GSTIN: 27BDPRXXXXXXXX</strong></p>
-            </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="invoice-title">INVOICE</div>
-
-        <div class="info-grid">
-            <div class="bill-to">
-                <h3>Bill To</h3>
-                {% if order.user %}
-                <p><strong>{{ order.user.first_name }} {{ order.user.last_name }}</strong></p>
-                <p>{{ order.user.email }}</p>
-                {% else %}
-                <p><strong>{{ order.customer_name }}</strong></p>
-                <p>{{ order.customer_mobile }}</p>
-                {% endif %}
-            </div>
-
-            <div class="invoice-meta">
-                <h3>Invoice Details</h3>
-                <p>Invoice #: <strong>INV-{{ order.id }}</strong></p>
-                <p>Date: {{ order.created_at|date:"F d, Y" }}</p>
-                <p>Status: <span
-                        style="color: {% if order.payment_status == 'COMPLETED' %}#48bb78{% else %}#ecc94b{% endif %}; font-weight: 600;">{{
-                        order.get_payment_status_display }}</span></p>
-            </div>
-        </div>
-
-        <table class="invoice-table">
-            <thead>
-                <tr>
-                    <th>Item Description</th>
-                    <th style="text-align: center;">Quantity</th>
-                    <th style="text-align: right;">Unit Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in order.items.all %}
-                <tr>
-                    <td>{{ item.product.name }}</td>
-                    <td style="text-align: center;">{{ item.quantity }}</td>
-                    <td style="text-align: right;">₹{{ item.unit_price }}</td>
-                    <td>₹{{ item.total_price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="totals-section">
-            <div class="totals-box">
-                <div class="total-row">
-                    <span>Subtotal</span>
-                    <!-- Calculate Subtotal from Total - Tax -->
-                    <!-- Assuming total_amount includes tax if gst_applied is true -->
-                    <span>₹{{ order.total_amount|add:order.tax_amount|safe }}</span>
-                    <!-- Wait, django templates are tricky with math. Let's use simpler logic if stored: order.total_amount is final. -->
-                    <!-- Since I am not storing subtotal explicitly, I can deduce it if needed or just show logic -->
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-box">
+                    <img src="{% static 'images/logo_v2.png' %}" alt="Mauli Traders">
                 </div>
-
-                {% if order.gst_applied %}
-                <div class="total-row" style="color: #666;">
-                    <span>Tax (18%)</span>
-                    <span>₹{{ order.tax_amount }}</span>
-                </div>
-                {% endif %}
-
-                <div class="total-row final">
-                    <span>Total Amount</span>
-                    <span>₹{{ order.total_amount }}</span>
+                <div class="company-info">
+                    <h2 class="company-name">Mauli Traders</h2>
+                    <div class="company-address">
+                        <p>Sonpeth-Pathri Road, Babhulgaon Phata</p>
+                        <p>Maharashtra 431506</p>
+                        <p>+91 98232 45370 | info@maulitraders.com</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="footer">
-            <p class="thank-you">Thank you for your business!</p>
-            <p>Terms & Conditions: Returns accepted within 7 days. | This is a computer generated invoice.</p>
+            <!-- Title -->
+            <div class="invoice-title">
+                <h1>Invoice</h1>
+                <p style="color: #718096; margin-top: 0.25rem;">Original Receipt</p>
+            </div>
+
+            <!-- Details -->
+            <div class="details-grid">
+                <div class="detail-group">
+                    <div class="section-title">Billed To</div>
+                    {% if order.user %}
+                    <p style="font-size: 1.1rem; color: var(--primary-color);">{{ order.user.first_name }} {{
+                        order.user.last_name }}</p>
+                    <p>{{ order.user.email }}</p>
+                    {% else %}
+                    <p style="font-size: 1.1rem; color: var(--primary-color);">{{ order.customer_name }}</p>
+                    <p>{{ order.customer_mobile }}</p>
+                    {% endif %}
+                </div>
+                <div class="detail-group" style="text-align: right;">
+                    {% if order.id %}
+                    <div class="section-title">Ref Number</div>
+                    <p>#INV-{{ order.id }}</p>
+                    {% endif %}
+
+                    <div class="section-title" style="margin-top: 1rem;">Date Issued</div>
+                    <p>{{ order.created_at|date:"F d, Y" }}</p>
+
+                    <div style="margin-top: 0.5rem;">
+                        <span class="status-badge"
+                            style="background: var(--light-bg); color: var(--primary-color); border: 1px solid var(--primary-color);">
+                            {{ order.payment_method }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="50%">Item Description</th>
+                            <th style="text-align: center;">Qty</th>
+                            <th style="text-align: right;">Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600; color: var(--primary-color);">{{ item.product.name }}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #718096;">SKU: {{ item.product.id }}</div>
+                            </td>
+                            <td style="text-align: center;">{{ item.quantity }}</td>
+                            <td style="text-align: right;">₹{{ item.unit_price }}</td>
+                            <td>₹{{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ order.total_amount|add:order.tax_amount }}</span>
+                        <!-- Simplification: Subtotal usually calc'd -->
+                    </div>
+                    {% if order.gst_applied %}
+                    <div class="total-row">
+                        <span>GST (18%)</span>
+                        <span>₹{{ order.tax_amount }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="total-row final">
+                        <span>Total Due</span>
+                        <span>₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer: QR & Social -->
+            <div class="footer-section">
+                <!-- QR Code -->
+                <div class="qr-container">
+                    <img src="{% static 'images/qr_code.png' %}" alt="Scan to Pay" class="qr-image">
+                    <span style="font-size: 0.85rem; color: #718096; font-weight: 500;">Scan to Visit / Pay</span>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="social-links">
+                    <a href="https://instagram.com/maulitraders" class="social-link">
+                        <i class="fab fa-instagram"></i> <span>@maulitraders</span>
+                    </a>
+                    <a href="https://facebook.com" class="social-link">
+                        <i class="fab fa-facebook"></i> <span>Mauli Traders</span>
+                    </a>
+                    <a href="https://wa.me/919823245370" class="social-link">
+                        <i class="fab fa-whatsapp"></i> <span>WhatsApp</span>
+                    </a>
+                </div>
+
+                <div class="thank-you">Thank you for your business!</div>
+                <div class="terms">
+                    <p>Computer generated invoice. No signature required.</p>
+                    <p>Terms & Conditions Apply</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="print-actions">
-        <button onclick="window.print()" class="btn btn-primary">Print Invoice</button>
-        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+    <div class="page-actions">
+        <a href="{% url 'home' %}" class="btn btn-outline">Back to Home</a>
+        <button onclick="window.print()" class="btn">Print Invoice</button>
     </div>
 </body>
 
