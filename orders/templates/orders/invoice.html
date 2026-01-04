@@ -44,7 +44,6 @@
             margin: 0 auto;
             border-radius: 12px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
             position: relative;
         }
 
@@ -64,15 +63,36 @@
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 2.5rem;
             position: relative;
+            padding-top: 20px;
+            /* Space for Ganesha */
+        }
+
+        /* Centered Ganesh Image */
+        .ganesh-section {
+            position: absolute;
+            top: 10px;
+            /* Push down slightly */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            /* Ensure on top */
+        }
+
+        .ganesh-section img {
+            max-height: 100px;
+            width: auto;
+            display: block;
         }
 
         .logo-box img {
             max-height: 80px;
             width: auto;
             display: block;
+            margin-bottom: 80px;
         }
 
         .company-info {
@@ -397,12 +417,18 @@
                 <div class="logo-box">
                     <img src="{% static 'images/logo_v2.png' %}" alt="Mauli Traders">
                 </div>
+
+                <div class="ganesh-section">
+                    <img src="{% static 'images/ganesh_final.jpg' %}" alt="Shree Ganesha">
+                </div>
+
                 <div class="company-info">
                     <h2 class="company-name">Mauli Traders</h2>
                     <div class="company-address">
-                        <p>Sonpeth-Pathri Road, Babhulgaon Phata</p>
+                        <p>Sonpeth-Pathri Road,</p>
+                        <p> Babhulgaon Phata </p>
                         <p>Maharashtra 431506</p>
-                        <p>+91 98232 45370 | info@maulitraders.com</p>
+                        <p>maulitraders.info@gmail.com</p>
                     </div>
                 </div>
             </div>
@@ -477,8 +503,7 @@
                 <div class="totals-box">
                     <div class="total-row">
                         <span>Subtotal</span>
-                        <span>₹{{ order.total_amount|add:order.tax_amount }}</span>
-                        <!-- Simplification: Subtotal usually calc'd -->
+                        <span>₹{{ order.get_subtotal }}</span>
                     </div>
                     {% if order.gst_applied %}
                     <div class="total-row">
@@ -497,19 +522,27 @@
             <div class="footer-section">
                 <!-- QR Code -->
                 <div class="qr-container">
-                    <img src="{% static 'images/qr_code.png' %}" alt="Scan to Pay" class="qr-image">
+                    {% if qr_code_base64 %}
+                    <!-- Dynamic Smart QR (UPI) -->
+                    <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="Scan to Pay" class="qr-image"
+                        style="width: 150px; height: 150px;">
+                    {% else %}
+                    <!-- Static Fallback (Non-UPI) -->
+                    <img src="{% static 'images/qr_code.png' %}" alt="Scan to Visit" class="qr-image"
+                        style="width: 150px; height: 150px;">
+                    {% endif %}
                     <span style="font-size: 0.85rem; color: #718096; font-weight: 500;">Scan to Visit / Pay</span>
                 </div>
 
                 <!-- Social Media Links -->
                 <div class="social-links">
-                    <a href="https://instagram.com/maulitraders" class="social-link">
+                    <a href="https://instagram.com/maulitraderss" class="social-link">
                         <i class="fab fa-instagram"></i> <span>@maulitraders</span>
                     </a>
-                    <a href="https://facebook.com" class="social-link">
+                    <a href="https://facebook.com/maulitraderss" class="social-link">
                         <i class="fab fa-facebook"></i> <span>Mauli Traders</span>
                     </a>
-                    <a href="https://wa.me/919823245370" class="social-link">
+                    <a href="https://wa.me/919022033088" class="social-link">
                         <i class="fab fa-whatsapp"></i> <span>WhatsApp</span>
                     </a>
                 </div>

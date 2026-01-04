@@ -3,8 +3,12 @@ from .models import Order
 from rest_framework import viewsets, permissions, filters
 from .models import Order, OrderItem
 from .serializers import OrderSerializer
+from .serializers import OrderSerializer
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST
+import base64
+from .utils import generate_attractive_qr
 from products.models import Product
 from .cart import Cart
 from .forms import OrderCreateForm
@@ -138,5 +142,53 @@ def invoice_view(request, order_id):
     # Allow access if user is admin OR if user owns the order
     if not (request.user.is_staff or order.user == request.user):
         return redirect('home') # Or 403
-        
-    return render(request, 'orders/invoice.html', {'order': order})
+    
+    # QR Code Logic
+    qr_code_base64 = None
+    
+    print(f"DEBUG: Order ID: {order.id}, Payment Method: '{order.payment_method}'")
+    
+    if order.payment_method == 'UPI':
+        # Generate Smart QR Code pointing to the Payment/Landing Page
+        payment_url = request.build_absolute_uri(reverse('pay_order', args=[order.id]))
+        try:
+            # Generate attractive PNG
+            png_bytes = generate_attractive_qr(payment_url)
+            qr_code_base64 = base64.b64encode(png_bytes).decode('utf-8')
+        except Exception as e:
+            with open('qr_debug.log', 'a') as f:
+                f.write(f"QR Error for Order {order.id}: {e}\n")
+            print(f"QR Generation Error: {e}")
+            qr_code_base64 = None
+    
+    return render(request, 'orders/invoice.html', {
+        'order': order, 
+        'qr_code_base64': qr_code_base64
+    })
+
+def pay_order_view(request, order_id):
+    """
+    Landing page for the QR code.
+    Displays order summary and a 'Pay via UPI' button.
+    """
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Construct UPI Intent URI
+    # pn: Payee Name, pa: Payee VPA, am: Amount, tn: Transaction Note (Order ID)
+    payee_vpa = "9823245370@upi" # Verified from invoice footer
+    payee_name = "Mauli Traders"
+    amount = f"{order.total_amount:.2f}"
+    note = f"Invoice {order.id}"
+    
+    upi_uri = f"upi://pay?pa={payee_vpa}&pn={payee_name}&am={amount}&tn={note}&cu=INR"
+    
+    return render(request, 'orders/pay_order.html', {
+        'order': order,
+        'upi_uri': upi_uri
+    })
+
+def terms(request):
+    """
+    Renders the Terms and Conditions page.
+    """
+    return render(request, 'orders/terms.html')

@@ -55,6 +55,12 @@ class Order(models.Model):
     
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='created_orders', help_text="Admin who created the order via POS")
 
+    @property
+    def get_subtotal(self):
+        if self.tax_amount:
+            return self.total_amount - self.tax_amount
+        return self.total_amount
+
     def __str__(self):
         return f"Order #{self.id} - {self.customer_name or self.user}"
 

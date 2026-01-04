@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Order #{{ order.id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            max-height: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        .amount-box {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+
+        .amount-label {
+            font-size: 0.9rem;
+            color: #15803d;
+            margin-bottom: 0.25rem;
+        }
+
+        .amount-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .details {
+            text-align: left;
+            margin-bottom: 2rem;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-upi {
+            background: #1a365d;
+            /* Mauli Blue */
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px -1px rgba(26, 54, 93, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .secure-badge {
+            font-size: 0.8rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <img src="{% static 'images/logo_v2.png' %}" alt="Mauli Traders" class="logo">
+
+        <h2>Payment Request</h2>
+        <p style="color: #718096; margin-top: -10px;">For Invoice #INV-{{ order.id }}</p>
+
+        <div class="amount-box">
+            <div class="amount-label">Total Payable Amount</div>
+            <div class="amount-value">₹{{ order.total_amount }}</div>
+        </div>
+
+        <div class="details">
+            <div class="detail-row">
+                <span>Date</span>
+                <span>{{ order.created_at|date:"d M, Y" }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Items</span>
+                <span>{{ order.items.count }}</span>
+            </div>
+            <span>
+                {% if order.customer_name %}
+                {{ order.customer_name }}
+                {% elif order.user %}
+                {{ order.user.first_name }} {{ order.user.last_name }}
+                {% else %}
+                Valued Customer
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Primary UPI Action -->
+        <a href="{{ upi_uri }}" class="btn btn-upi">
+            Pay via UPI App
+        </a>
+
+        <!-- Secondary Actions -->
+        <a href="{% url 'invoice' order.id %}" class="btn btn-outline">
+            View Full Invoice
+        </a>
+
+        <div class="secure-badge">
+            <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+            Secure Payment Link by Mauli Traders
+        </div>
+    </div>
+</body>
+
+</html>

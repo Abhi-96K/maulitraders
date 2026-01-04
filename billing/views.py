@@ -15,6 +15,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 import io
 import uuid
+from decimal import Decimal
 
 class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
@@ -169,7 +170,7 @@ def pos_view(request):
                 
                 # Financial Calculations
                 if gst_applied:
-                    tax_amount = subtotal_amount * 0.18
+                    tax_amount = subtotal_amount * Decimal('0.18')
                     total_amount = subtotal_amount + tax_amount
                 else:
                     tax_amount = 0
